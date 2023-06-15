@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Template con Bootstrap</title>
+    <!-- Bootstrap CSS -->
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+  <!-- Cabecera -->
+  <header class="navbar navbar-dark bg-dark">
+    <div class="container">
+      <span class="navbar-brand">
+        <span class="mr-2">PRO-RUN</span>
+        <br>
+        <small class="text-white text-center">Plantillas deportivas</small>
+      </span>
+      <span class="navbar-text">
+        Nombre de Usuario
+      </span>
+    </div>
+  </header>
+
+  <!-- Contenedor principal -->
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- Menú lateral -->
+      <div class="col-md-3 bg-light">
+        <div class="list-group">
+          <a href="/paciente" class="list-group-item list-group-item-action">Pacientes</a>
+          <a href="/agenda" class="list-group-item list-group-item-action">Agenda</a>
+        </div>
+      </div>
+
+      <!-- Contenido principal -->
+      <div class="col-md-9">
+        <!-- Aquí se mostrará el contenido variable según la URL -->
+         {{{body}}}
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

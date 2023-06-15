@@ -1,0 +1,112 @@
+{{! <style>
+    .form-group{ flex-basis: 50% !important; box-sizing: border-box !important; }img{width: 5rem;height: 3rem;}td{vertical-align: middle; }
+</style> }}
+
+
+<div class="container">
+  <h2 class="text-center mt-4">Agendar Paciente</h2>
+  <form id="paciente-form" class="mt-4" method="POST" >
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label for="nombre_paciente" class="form-label">Nombre</label>
+          <input type="text" class="form-control" id="nombre_paciente" name="nombre_paciente">
+        </div>
+        <div class="mb-3">
+          <label for="apellido_paciente" class="form-label">Apellido</label>
+          <input type="text" class="form-control" id="apellido_paciente" name="apellido_paciente">
+        </div>
+        <div class="mb-3">
+          <label for="dni_paciente" class="form-label">DNI</label>
+          <input type="text" class="form-control" id="dni_paciente" name="dni_paciente">
+        </div>
+        <div class="mb-3">
+          <label for="peso_paciente" class="form-label">Peso</label>
+          <input type="text" class="form-control" id="peso_paciente" name="peso_paciente">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label for="altura_paciente" class="form-label">Altura</label>
+          <input type="text" class="form-control" id="altura_paciente" name="altura_paciente">
+        </div>
+        <div class="mb-3">
+          <label for="edad_paciente" class="form-label">Edad</label>
+          <input type="text" class="form-control" id="edad_paciente" name="edad_paciente">
+        </div>
+        <div class="mb-3">
+          <label for="nacimiento_paciente" class="form-label">Fecha de Nacimiento</label>
+          <input type="date" class="form-control" id="nacimiento_paciente" name="nacimiento_paciente">
+        </div>
+        <div class="mb-3">
+          <label for="talle_paciente" class="form-label">Talle</label>
+          <input type="text" class="form-control" id="talle_paciente" name="talle_paciente">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label for="contacto_paciente" class="form-label">Contacto</label>
+          <input type="text" class="form-control" id="contacto_paciente" name="contacto_paciente">
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label for="email_paciente" class="form-label">Email</label>
+          <input type="text" class="form-control" id="email_paciente" name="email_paciente">
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-4">Guardar Paciente</button>
+  </form>
+</div>
+
+<div id="product-conteiner" >
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID Paciente</th>
+                <th>Nombre Paciente</th>
+                <th>Apellido Paciente</th>
+                <th>DNI Paciente</th>
+                <th>Peso Paciente</th>
+                <th>Altura Paciente</th>
+                <th>Edad Paciente</th>
+                <th>Nacimiento Paciente</th>
+                <th>Talle Paciente</th>
+                <th>Contacto Paciente</th>
+                <th>Email Paciente</th>
+                <th>Acciones</th>
+
+            </tr>
+        </thead>
+        <tbody id="table-product-body">
+            {{#each pacientes}}
+                <tr id="paciente-{{this.id_paciente}}">
+                    <td>{{this.id_paciente}}</td>
+                    <td>{{this.nombre_paciente}}</td>
+                    <td>{{this.apellido_paciente}}</td>
+                    <td>{{this.dni_paciente}}</td>
+                    <td>{{this.peso_paciente}}</td>
+                    <td>{{this.altura_paciente}}</td>
+                    <td>{{this.edad_paciente}}</td>
+                    <td>{{this.nacimiento_paciente}}</td>
+                    <td>{{this.talle_paciente}}</td>
+                    <td>{{this.contacto_paciente}}</td>
+                    <td>{{this.email_paciente}}</td>
+                    <td> <button type="button" class="btn btn-danger" onclick="borrarProductoHtml('{{this._id}}')"><i class="bi bi-trash3-fill"></i></button> <button type="button" class="btn btn-success" onclick="agregarCarrito('{{this._id}}')"><i class="fa-solid fa-cart-plus">+</i></button></td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+   
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="../js/funcionesHtmlAgenda.js"></script>
+<script src="../js/main.js"></script>=
+{{! <script></script> }}

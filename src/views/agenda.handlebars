@@ -1,0 +1,135 @@
+{{! <style>
+    .form-group{ flex-basis: 50% !important; box-sizing: border-box !important; }img{width: 5rem;height: 3rem;}td{vertical-align: middle; }
+</style> }}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Agrega los metadatos, título y enlaces a CSS -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendar Cita</title>
+  
+</head>
+<body>
+  <div class="container">
+    <h2 class="text-center mt-4">Agendar Cita</h2>
+    <form id="agendar-cita-form" class="mt-4" method="POST" action="/insertar">
+      <div class="row">
+        <div class="col-md-6">
+          <h4><span class="oi oi-person"></span> Datos del Paciente</h4>
+          <div class="form-group">
+            <label for="nombre_paciente"><span class="oi oi-person"></span> Nombre</label>
+            <input type="text" class="form-control" id="nombre_paciente" name="nombre_paciente" required>
+          </div>
+          <div class="form-group">
+            <label for="apellido_paciente"><span class="oi oi-person"></span> Apellido</label>
+            <input type="text" class="form-control" id="apellido_paciente" name="apellido_paciente" required>
+          </div>
+          <div class="form-group">
+            <label for="dni_paciente" class="text-muted"><span class="oi oi-person"></span> DNI</label>
+            <input type="text" class="form-control" id="dni_paciente" name="dni_paciente" readonly style="background-color: #e9ecef;">
+          </div>
+          <div class="form-group">
+            <label for="peso_paciente" class="text-muted"><span class="oi oi-scale"></span> Peso</label>
+            <input type="text" class="form-control" id="peso_paciente" name="peso_paciente" readonly style="background-color: #e9ecef;">
+          </div>
+          <div class="form-group">
+            <label for="altura_paciente" class="text-muted"><span class="oi oi-arrow-thick-vertical"></span> Altura</label>
+            <input type="text" class="form-control" id="altura_paciente" name="altura_paciente" readonly style="background-color: #e9ecef;">
+          </div>
+          <div class="form-group">
+            <label for="edad_paciente" class="text-muted"><span class="oi oi-calendar"></span> Edad</label>
+            <input type="text" class="form-control" id="edad_paciente" name="edad_paciente" readonly style="background-color: #e9ecef;">
+          </div>
+          <div class="form-group">
+            <label for="talle_paciente" class="text-muted"><span class="oi oi-ruler"></span> Talle</label>
+            <input type="text" class="form-control" id="talle_paciente" name="talle_paciente" readonly style="background-color: #e9ecef;">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h4><span class="oi oi-calendar"></span> Datos de la Cita</h4>
+          <div class="form-group">
+            <label for="fecha_cita"><span class="oi oi-calendar"></span> Fecha de Cita</label>
+            <input type="date" class="form-control" id="fecha_cita" name="fecha_cita" required>
+          </div>
+          <div class="form-group">
+            <label for="proxima_cita"><span class="oi oi-calendar"></span> Próxima Cita</label>
+            <input type="date" class="form-control" id="proxima_cita" name="proxima_cita" readonly style="background-color: #e9ecef;">
+          </div>
+          <div class="form-group">
+            <label for="comentario_cita" class="text-muted"><span class="oi oi-comment-square"></span> Comentario</label>
+            <textarea class="form-control" id="comentario_cita" name="comentario_cita" rows="4" readonly style="background-color: #e9ecef;"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="contacto_paciente"><span class="oi oi-phone"></span> Teléfono de Contacto</label>
+            <input type="text" class="form-control" id="contacto_paciente" name="contacto_paciente" required>
+          </div>
+          <div class="form-group">
+            <label for="email_paciente" class="text-muted"><span class="oi oi-envelope"></span> Email</label>
+            <input type="email" class="form-control" id="email_paciente" name="email_paciente" readonly style="background-color: #e9ecef;">
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary mt-4">Guardar Cita</button>
+    </form>
+  </div>
+</body>
+</html>
+
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID Paciente</th>
+        <th>Nombre Paciente</th>
+        <th>Apellido Paciente</th>
+        <th>DNI Paciente</th>
+        <th>Peso Paciente</th>
+        <th>Altura Paciente</th>
+        <th>Edad Paciente</th>
+        <th>Nacimiento Paciente</th>
+        <th>Talle Paciente</th>
+        <th>Contacto Paciente</th>
+        <th>Email Paciente</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="table-product-body">
+      {{#each pacientes}}
+      <tr id="paciente-{{this.id_paciente}}">
+        <td>{{this.id_paciente}}</td>
+        <td>{{this.nombre_paciente}}</td>
+        <td>{{this.apellido_paciente}}</td>
+        <td>{{this.dni_paciente}}</td>
+        <td>{{this.peso_paciente}}</td>
+        <td>{{this.altura_paciente}}</td>
+        <td>{{this.edad_paciente}}</td>
+        <td>{{this.nacimiento_paciente}}</td>
+        <td>{{this.talle_paciente}}</td>
+        <td>{{this.contacto_paciente}}</td>
+        <td>{{this.email_paciente}}</td>
+        <td>
+          <button type="button" class="btn btn-danger" onclick="borrarProductoHtml('{{this._id}}')">
+            <i class="bi bi-trash3-fill"></i>
+          </button>
+          <button type="button" class="btn btn-success" onclick="agregarCarrito('{{this._id}}')">
+            <i class="fa-solid fa-cart-plus">+</i>
+          </button>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="../js/funcionesHtmlAgenda.js"></script>
+<script src="../js/main.js"></script>=
+{{! <script></script> }}
