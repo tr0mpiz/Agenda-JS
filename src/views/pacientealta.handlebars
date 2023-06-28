@@ -1,0 +1,163 @@
+{{! <style>
+    .form-group{ flex-basis: 50% !important; box-sizing: border-box !important; }img{width: 5rem;height: 3rem;}td{vertical-align: middle; }
+</style> }}
+
+{{#if paciente.0.id_paciente}}   
+{{#if modificar}}
+<h4 class="fw-bold py-3 mb-4">
+    <span class="text-muted fw-light">PACIENTES /</span> MODIFICAR
+</h4>       
+{{else}}
+<h4 class="fw-bold py-3 mb-4">
+    <span class="text-muted fw-light">PACIENTES /</span> SOLO LECTURA
+</h4>
+{{/if}}
+
+ 
+{{else}}         
+  <h4 class="fw-bold py-3 mb-4">
+    <span class="text-muted fw-light">PACIENTES /</span> ALTA
+  </h4>
+{{/if}}
+
+
+
+<div class="container">
+  <div class="row">
+   
+    <!-- Basic with Icons -->
+    <div class="col-xxl">
+      <div class="card mb-4">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <h5 class="mb-0">Agendar Paciente</h5> <small class="text-muted float-end">Formulario de alta de paciente.</small>
+        </div>
+        <div class="card-body">
+          
+          {{#if paciente.0.id_paciente}}
+            {{#if modificar}}
+              <form  id="paciente-form" method="put">
+            {{/if}}
+          {{else}}
+           <form  id="paciente-form" method="POST">
+          {{/if}}
+          
+            
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="nombre_paciente">Nombre</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="nombre_paciente2" class="input-group-text"><i class="bx bx-user"></i></span>
+                  <input type="text" class="form-control" value="{{paciente.0.nombre_paciente}}" id="nombre_paciente" name="nombre_paciente" required placeholder="John Doe" aria-label="John Doe" aria-describedby="nombre_paciente2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="apellido_paciente">Apellido</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="apellido_paciente2" class="input-group-text"><i class="bx bx-user"></i></span>
+                  <input value="{{ paciente.0.apellido_paciente }}" type="text" class="form-control"  id="apellido_paciente" required name="apellido_paciente" placeholder="Smith" aria-label="Smith" aria-describedby="apellido_paciente2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="dni_paciente">DNI</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="dni_paciente2" class="input-group-text"><i class="bx bx-id-card"></i></span>
+                  <input value="{{ paciente.0.dni_paciente }}" type="text" class="form-control" required id="dni_paciente" name="dni_paciente" placeholder="12345678" aria-label="12345678" aria-describedby="dni_paciente2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="peso_paciente">Peso</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="peso_paciente2" class="input-group-text"><i class="bx bx-weight"></i></span>
+                  <input value="{{ paciente.0.peso_paciente }}" type="text" class="form-control" required id="peso_paciente" name="peso_paciente" placeholder="75" aria-label="75" aria-describedby="peso_paciente2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="altura_paciente">Altura</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="altura_paciente2" class="input-group-text"><i class="bx bx-height"></i></span>
+                  <input value="{{ paciente.0.altura_paciente }}" type="text" class="form-control" required id="altura_paciente" name="altura_paciente" placeholder="180" aria-label="180" aria-describedby="altura_paciente2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label"  for="edad_paciente">Edad</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="edad_paciente2" class="input-group-text"><i class="bx bx-calendar"></i></span>
+                  <input value="{{ paciente.0.edad_paciente }}" type="text" class="form-control" required id="edad_paciente" name="edad_paciente" placeholder="30" aria-label="30" aria-describedby="edad_paciente2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="nacimiento_paciente">Fecha de Nacimiento</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="nacimiento_paciente2" class="input-group-text"><i class="bx bx-calendar"></i></span>
+                  <input value="{{ paciente.0.fecha_formateada_nacimiento }}" type="date" class="form-control" required id="nacimiento_paciente" name="nacimiento_paciente" aria-describedby="nacimiento_paciente2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="talle_paciente">Talle</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="talle_paciente2" class="input-group-text"><i class="bx bx-ruler"></i></span>
+                  <input value="{{ paciente.0.talle_paciente }}" type="text" class="form-control" required id="talle_paciente" name="talle_paciente" placeholder="M" aria-label="M" aria-describedby="talle_paciente2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="contacto_paciente">Contacto</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="contacto_paciente2" class="input-group-text"><i class="bx bx-phone"></i></span>
+                  <input value="{{ paciente.0.contacto_paciente }}" type="text" class="form-control" required id="contacto_paciente" name="contacto_paciente" placeholder="1234567890" aria-label="1234567890" aria-describedby="contacto_paciente2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="email_paciente">Email</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="email_paciente2" class="input-group-text"><i class="bx bx-envelope"></i></span>
+                  <input value="{{ paciente.0.email_paciente }}" type="email" class="form-control" required id="email_paciente" name="email_paciente" placeholder="john.doe@example.com" aria-label="john.doe@example.com" aria-describedby="email_paciente2">
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              {{#if paciente.0.id_paciente}}
+                 {{#if modificar}}
+                  <div class="col-sm-10 offset-sm-2">
+                    <button type="" class="btn btn-primary">Modificar</button>
+                  </div>
+                {{/if}}
+              {{else}}
+                <div class="col-sm-10 offset-sm-2">
+                  <button type="submit" class="btn btn-primary">Guardar Paciente</button>
+                </div>
+              {{/if}}
+             
+            </div>
+          </form>
+        
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="../js/funcionesHtmlAgenda.js"></script>
+<script src="../js/main.js"></script>
+{{! <script></script> }}

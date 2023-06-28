@@ -1,31 +1,24 @@
-const toast = (text, icon, position) => {
-    let body = document.getElementById("body-main");
-    Swal.fire({
-        text: text,
-        target: "#body-main",
-        icon: icon,
-        // customClass: {
-        //     container: "position-absolute",
-        // },
-        toast: true,
-        showConfirmButton: false,
-        position: position,
-    });
-};
 
+function setActiveClass() {
+    // Obtener la URL actual
+    var currentUrl = window.location.href;
+    var path = new URL(currentUrl).pathname;
+    
+    // Obtener todos los elementos <a> dentro de la clase "menu-sub"
+    var menuSubLinks = document.querySelectorAll('.menu-sub a');
 
-function verificarExistencia() {
-    const usuarioExiste = sessionStorage.getItem("usuario");
-    const cartIdExiste = sessionStorage.getItem("cartId");
-
-    console.log("usuarioExiste,cartIdExiste", usuarioExiste, cartIdExiste);
-    if (usuarioExiste != null && cartIdExiste != null) {
-        console.log("entre");
-        loginStyling(usuarioExiste, cartIdExiste);
-    } else {
-        console.log("no entre");
-        logOutStyling();
+    // Iterar sobre los elementos y agregar la clase "active" al elemento con href="/agenda/alta" y su elemento <li> padre
+    for (var i = 0; i < menuSubLinks.length; i++) {
+    var link = menuSubLinks[i];
+    if (link.getAttribute('href') === path) {
+        link.classList.add('active');
+        link.closest('li').classList.add('active');
+        link.closest('li').closest('ul').parentNode.classList.add('open');
+        
     }
-}
+    }
+    
+  }
 
-// verificarExistencia();
+setActiveClass();
+

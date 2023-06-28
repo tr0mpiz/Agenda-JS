@@ -1,0 +1,46 @@
+<div class="container-xxl">
+  <div class="authentication-wrapper authentication-basic container-p-y">
+    <div class="authentication-inner">
+      <!-- Register -->
+      <div class="card">
+        <div class="card-body">
+          <h4 class="mb-2"> 👋 Parece que no ingresaste con ninguna cuenta</h4>
+          <p class="mb-4">Por favor conectate para poder gestionar.</p>
+          {{#if status}}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+              {{msg}}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {{/if}}
+          <form id="formAuthentication" class="mb-3"  method="POST">
+            <div class="mb-3">
+              <label for="email" class="form-label">Correo</label>
+              <input type="email" class="form-control" id="email" name="email" placeholder="Jhonson@babay.tk" required autofocus="">
+            </div>
+            <div class="mb-3 form-password-toggle">
+              <div class="d-flex justify-content-between">
+                <label class="form-label" for="password">Contraseña</label>
+                {{!-- <a href="auth-forgot-password-basic.html">
+                  <small>Forgot Password?</small>
+                </a> --}}
+              </div>
+              <div class="input-group input-group-merge">
+                <input type="password" id="password" class="form-control" name="password" placeholder="············" required aria-describedby="password">
+                <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+              </div>
+            </div>
+            <div class="mb-3">
+              <button class="btn btn-primary d-grid w-100" type="submit">Ingresar</button>
+            </div>
+          </form>
+           {{!-- <p class="text-center">
+            <span>New on our platform?</span>
+            <a href="auth-register-basic.html">
+              <span>Create an account</span>
+            </a>
+          </p> --}}
+        </div>
+      </div>
+      <!-- /Register -->
+    </div>
+  </div>
+</div>

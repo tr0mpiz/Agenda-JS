@@ -1,135 +1,192 @@
-{{! <style>
-    .form-group{ flex-basis: 50% !important; box-sizing: border-box !important; }img{width: 5rem;height: 3rem;}td{vertical-align: middle; }
-</style> }}
-
-
-<!DOCTYPE html>
-<html>
-<head>
-  <!-- Agrega los metadatos, título y enlaces a CSS -->
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agendar Cita</title>
-  
-</head>
-<body>
-  <div class="container">
-    <h2 class="text-center mt-4">Agendar Cita</h2>
-    <form id="agendar-cita-form" class="mt-4" method="POST" action="/insertar">
-      <div class="row">
-        <div class="col-md-6">
-          <h4><span class="oi oi-person"></span> Datos del Paciente</h4>
-          <div class="form-group">
-            <label for="nombre_paciente"><span class="oi oi-person"></span> Nombre</label>
-            <input type="text" class="form-control" id="nombre_paciente" name="nombre_paciente" required>
-          </div>
-          <div class="form-group">
-            <label for="apellido_paciente"><span class="oi oi-person"></span> Apellido</label>
-            <input type="text" class="form-control" id="apellido_paciente" name="apellido_paciente" required>
-          </div>
-          <div class="form-group">
-            <label for="dni_paciente" class="text-muted"><span class="oi oi-person"></span> DNI</label>
-            <input type="text" class="form-control" id="dni_paciente" name="dni_paciente" readonly style="background-color: #e9ecef;">
-          </div>
-          <div class="form-group">
-            <label for="peso_paciente" class="text-muted"><span class="oi oi-scale"></span> Peso</label>
-            <input type="text" class="form-control" id="peso_paciente" name="peso_paciente" readonly style="background-color: #e9ecef;">
-          </div>
-          <div class="form-group">
-            <label for="altura_paciente" class="text-muted"><span class="oi oi-arrow-thick-vertical"></span> Altura</label>
-            <input type="text" class="form-control" id="altura_paciente" name="altura_paciente" readonly style="background-color: #e9ecef;">
-          </div>
-          <div class="form-group">
-            <label for="edad_paciente" class="text-muted"><span class="oi oi-calendar"></span> Edad</label>
-            <input type="text" class="form-control" id="edad_paciente" name="edad_paciente" readonly style="background-color: #e9ecef;">
-          </div>
-          <div class="form-group">
-            <label for="talle_paciente" class="text-muted"><span class="oi oi-ruler"></span> Talle</label>
-            <input type="text" class="form-control" id="talle_paciente" name="talle_paciente" readonly style="background-color: #e9ecef;">
-          </div>
-        </div>
-        <div class="col-md-6">
-          <h4><span class="oi oi-calendar"></span> Datos de la Cita</h4>
-          <div class="form-group">
-            <label for="fecha_cita"><span class="oi oi-calendar"></span> Fecha de Cita</label>
-            <input type="date" class="form-control" id="fecha_cita" name="fecha_cita" required>
-          </div>
-          <div class="form-group">
-            <label for="proxima_cita"><span class="oi oi-calendar"></span> Próxima Cita</label>
-            <input type="date" class="form-control" id="proxima_cita" name="proxima_cita" readonly style="background-color: #e9ecef;">
-          </div>
-          <div class="form-group">
-            <label for="comentario_cita" class="text-muted"><span class="oi oi-comment-square"></span> Comentario</label>
-            <textarea class="form-control" id="comentario_cita" name="comentario_cita" rows="4" readonly style="background-color: #e9ecef;"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="contacto_paciente"><span class="oi oi-phone"></span> Teléfono de Contacto</label>
-            <input type="text" class="form-control" id="contacto_paciente" name="contacto_paciente" required>
-          </div>
-          <div class="form-group">
-            <label for="email_paciente" class="text-muted"><span class="oi oi-envelope"></span> Email</label>
-            <input type="email" class="form-control" id="email_paciente" name="email_paciente" readonly style="background-color: #e9ecef;">
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">AGENDA /</span> CONSULTA </h4>
+<div class="container">
+  <div class="row">
+       <div class="col-md-3 col-12 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title d-flex align-items-start justify-content-between">
+              <div class="avatar flex-shrink-0">
+                <i class="bx bx-calendar-plus"></i>
+              </div>
+              <div class="dropdown">
+                <button class="btn p-0" type="button" id="cardOpt6" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt6">
+                  <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                  <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                </div>
+              </div>
+            </div>
+             <span class="fw-semibold d-block mb-1">HOY</span>
+            {{#if hoy.0.hoy}}
+            <h3 class="card-title mb-2">{{ hoy.0.hoy }}</h3>
+            {{else}}
+            <h3 class="card-title mb-2">0</h3>
+            {{/if}}
           </div>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary mt-4">Guardar Cita</button>
-    </form>
-  </div>
-</body>
-</html>
+      <div class="col-md-3 col-12 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title d-flex align-items-start justify-content-between">
+              <div class="avatar flex-shrink-0">
+                <i class='bx bx-calendar-check' ></i>
+              </div>
+              <div class="dropdown">
+                <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
+                  <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                  <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                </div>
+              </div>
+            </div>
+            <span class="fw-semibold d-block mb-1">MAÑANA</span>
+            {{#if maniana.0.maniana}}
+            <h3 class="card-title mb-2">{{ maniana.0.maniana }}</h3>
+            {{else}}
+            <h3 class="card-title mb-2">0</h3>
+            {{/if}}
+            
+          </div>
+        </div>
+      </div>
 
-<div class="table-responsive">
-  <table class="table table-bordered">
-    <thead class="thead-dark">
-      <tr>
-        <th>ID Paciente</th>
-        <th>Nombre Paciente</th>
-        <th>Apellido Paciente</th>
-        <th>DNI Paciente</th>
-        <th>Peso Paciente</th>
-        <th>Altura Paciente</th>
-        <th>Edad Paciente</th>
-        <th>Nacimiento Paciente</th>
-        <th>Talle Paciente</th>
-        <th>Contacto Paciente</th>
-        <th>Email Paciente</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody id="table-product-body">
-      {{#each pacientes}}
-      <tr id="paciente-{{this.id_paciente}}">
-        <td>{{this.id_paciente}}</td>
-        <td>{{this.nombre_paciente}}</td>
-        <td>{{this.apellido_paciente}}</td>
-        <td>{{this.dni_paciente}}</td>
-        <td>{{this.peso_paciente}}</td>
-        <td>{{this.altura_paciente}}</td>
-        <td>{{this.edad_paciente}}</td>
-        <td>{{this.nacimiento_paciente}}</td>
-        <td>{{this.talle_paciente}}</td>
-        <td>{{this.contacto_paciente}}</td>
-        <td>{{this.email_paciente}}</td>
-        <td>
-          <button type="button" class="btn btn-danger" onclick="borrarProductoHtml('{{this._id}}')">
-            <i class="bi bi-trash3-fill"></i>
-          </button>
-          <button type="button" class="btn btn-success" onclick="agregarCarrito('{{this._id}}')">
-            <i class="fa-solid fa-cart-plus">+</i>
-          </button>
-        </td>
-      </tr>
-      {{/each}}
-    </tbody>
-  </table>
+      <div class="col-md-3 col-12 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title d-flex align-items-start justify-content-between">
+              <div class="avatar flex-shrink-0">
+                <i class='bx bxs-calendar-exclamation'></i>
+              </div>
+              <div class="dropdown">
+                <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
+                  <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                  <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                </div>
+              </div>
+            </div>
+            <span class="fw-semibold d-block mb-1">ASIGNADOS</span>
+            {{#if pactadas.0.pactadas}}
+            <h3 class="card-title mb-2">{{ pactadas.0.pactadas }}</h3>
+            {{else}}
+            <h3 class="card-title mb-2">0</h3>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-12 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title d-flex align-items-start justify-content-between">
+              <div class="avatar flex-shrink-0">
+                <i class="bx bx-calendar"></i>
+              </div>
+              
+            </div>
+            <span class="fw-semibold d-block mb-1">FECHA</span>
+            <div class="btn-group" role="group">
+              
+              <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ fecha }}
+              </button>
+              <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                <a class="dropdown-item disabled" href="">Toda la semana</a>
+                <a class="dropdown-item disabled" href="">Todo el mes</a>
+              </div>
+            </div>
+            
+            
+          </div>
+        </div>
+      </div>
+      
+     
+    </div>
+  <div class="row">
+    <!-- Earnings (Monthly) Card Example -->
+ 
+
+  <h1 class="h3 mb-2 text-gray-800">TURNOS</h1>
+  <p class="mb-4">Aca aparecen los Turnos que se agendaron ordenadas por fecha.</p>
+
+    <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">TURNOS</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Id cita</th>
+                            <th>Fecha cita</th>
+                            <th>Nombre Paciente</th>
+                            <th>Apellido Paciente</th>
+                            <th>DNI Paciente</th>
+                            <th>Contacto Paciente</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                          <th>Id cita</th>
+                          <th>Fecha cita</th>
+                          <th>Nombre Paciente</th>
+                          <th>Apellido Paciente</th>
+                          <th>DNI Paciente</th>
+                          <th>Contacto Paciente</th>
+                          <th>Estado</th>
+                          <th>Acciones</th>
+                        </tr>
+                    </tfoot>
+                    
+                    <tbody id="table-product-body">
+                      {{#each agenda}}
+                      <tr id="paciente-{{this.id_agenda}}">
+                        <td>{{this.id_agenda}}</td>
+                        <td>{{this.fecha_cita}}</td>
+                        <td>{{this.nombre_paciente}}</td>
+                        <td>{{this.apellido_paciente}}</td>
+                        <td>{{this.dni_paciente}}</td>
+                        <td>{{this.contacto_paciente}}</td>
+                        <td><span class="badge bg-white text-primary">{{this.descripcion}}</span></td>
+                        <td>
+                          <div class="btn-group btn-group-horizontal">
+                            <button data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bx bx-trash bx-xs' ></i> <span>Eliminar Cita</span>" onclick="peticionAjax('/agenda/eliminar?id={{this.id_agenda}}','DELETE','true')" class="btn btn-icon btn-outline-danger m-1"><i class="bi bi-trash"></i></button>
+                            <button data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bx bx-check bx-xs' ></i> <span>Confirmar asistencia</span>"  onclick="peticionAjax('/agenda/ensala?id={{this.id_agenda}}','GET','true')" class="btn btn-icon btn-outline-success m-1"><i class="bi bi-check"></i></button>
+                            <a data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bx bx-pencil bx-xs' ></i> <span>Modificar Cita</span>" href="/agenda/alta?id={{this.id_agenda}}"  class="btn btn-icon btn-outline-primary m-1"><i class="bi bi-pencil-fill"></i></a>
+                          </div>
+                        </td>
+                        
+                      </tr>
+                      {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    
 </div>
+
+
+
 
 
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="../js/funcionesHtmlAgenda.js"></script>
-<script src="../js/main.js"></script>=
+<script src="../js/main.js"></script>
 {{! <script></script> }}

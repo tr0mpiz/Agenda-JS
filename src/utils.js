@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { v4 as uuidv4 } from "uuid";
 
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, path.join(__dirname, "public/pictures"));
@@ -59,6 +60,8 @@ export const ejecutarConsulta= (query) => {
     });
   });
 };
+
+
 
 
 ///

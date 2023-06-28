@@ -1,7 +1,8 @@
 import express from "express";
-import { uploader } from "../utils.js";
+import { con, uploader } from "../utils.js";
 import fs from "fs";
 import { __dirname, __filename,ejecutarConsulta } from "../utils.js";
+import { isUser } from "../middleware/Helper.js";
 
 //import { agendaService } from "../services/agenda.services.js";
 //import { agendaModel } from "../DAO/models/agenda.model.js";
@@ -10,13 +11,11 @@ export const pacienteHtmlRouter = express.Router();
 
 //const Service = new agendaService();
 
-pacienteHtmlRouter.get("/", async (req, res) => {
+pacienteHtmlRouter.get("/alta", isUser, async (req, res) => {
     try {
         const results = await ejecutarConsulta('select * from paciente');
-        console.log(results);
-        let rest=1;
-        let links="www.google.com.ar";
-        return res.status(200).render("paciente", { pacientes: results, pagination: rest, links });
+        
+        return res.status(200).render("pacientealta", { pacientes: results });
     }  catch (error) {
         console.error(error);
         return res.status(404).json({msg:"fallo"});
@@ -25,40 +24,124 @@ pacienteHtmlRouter.get("/", async (req, res) => {
    
 });
 
-pacienteHtmlRouter.get("/:pid", async (req, res) => {
-    let pid = req.params.pid;
-    let agenda = await Service.getById(pid);
-    // let agenda = await Service.getAll();
-    // agenda = agenda.filter((x) => x._id == pid);
-    agenda = JSON.parse(JSON.stringify(agenda));
-    if (agenda.length == 0) {
-        return res.status(404).json({ status: "error", msg: `No se encuentra ningun agendao con el id: ${pid}`, data: agenda });
-    } else {
-        console.log(agenda);
-        return res.status(200).render("home", { agendaos: agenda });
+pacienteHtmlRouter.get("/", async (req, res) => {
+    let dni=req.query.dni;
+    
+    if (dni) {
+        try {
+            const paciente = await ejecutarConsulta(`SELECT DATE_FORMAT(nacimiento_paciente, '%d/%m/%Y') AS fecha_formateada, paciente.* FROM paciente WHERE dni_paciente = '${dni}'`);
+            
+            return res.status(200).json(paciente);
+        }  catch (error) {
+            console.log("nno");
+            return res.status(404).json({msg:"No encontrado"});
+          }
     }
+    try {
+       
+        const results = await ejecutarConsulta("SELECT DATE_FORMAT(nacimiento_paciente, '%d/%m/%Y') AS fecha_formateada, paciente.* FROM paciente");
+        console.log(results);
+
+        return res.status(200).render("paciente", { pacientes: results });
+    }  catch (error) {
+        console.error(error);
+        return res.status(404).json({msg:"fallo"});
+      }
+
+   
 });
 
-pacienteHtmlRouter.post("/", uploader.single("thumbnail"), async (req, res) => {
+pacienteHtmlRouter.get("/siguiente", async (req, res) => {
+    try {
+        const pactadas = await ejecutarConsulta("SELECT count(*) AS pactadas FROM agenda_estados WHERE id_estado = 1");
+        const ensala = await ejecutarConsulta("SELECT count(*) AS ensala FROM agenda_estados WHERE id_estado = 2");
+        
+        const fechaCita = new Date();
+        fechaCita.setDate(fechaCita.getDate() + 1);
+        const fechaFormateada = fechaCita.toISOString().slice(0, 10);
+        const maniana = await ejecutarConsulta(`SELECT count(*) as maniana FROM agenda WHERE DATE(fecha_cita) = '${fechaFormateada}'`);
+        const hoy = await ejecutarConsulta(`SELECT count(*) as hoy FROM agenda WHERE DATE(fecha_cita) = CURDATE()`);
+
+        const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(fecha_cita,'%d-%m-%Y %H:%i') AS fecha_cita, DATE_FORMAT(proxima_cita,'%d-%m-%Y %H:%i') AS proxima_cita, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente = b.id_paciente AND a.id_agenda = c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado = 6) AND c.id_estado =2;");
+        console.log(results);
+        
+        return res.status(200).render("proximo", { pacientes: results,pactadas:pactadas,maniana:maniana,hoy:hoy,ensala:ensala });
+    }  catch (error) {
+        console.error(error);
+        return res.status(404).json({msg:"fallo"});
+      }
+
+   
+});
+
+pacienteHtmlRouter.get("/enrecepcion", async (req, res) => {
+    let id=req.query.id;
+       try {
+            let fecha = new Date();
+            // formate la fecha en dd/mm/yyyy hh:mm:ss
+            fecha = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear() + " " + fecha.getHours() + ":" + fecha.getMinutes() ;
+            const insertagendaestados = await ejecutarConsulta(`INSERT INTO agenda_estados (id_agenda, id_estado, observacion) VALUES (${id}, 4, 'Se envio a taller :${fecha}')`);
+              
+           const pacientes = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%d/%m/%Y') AS fecha_formateada, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2));");
+           
+           return res.status(200).render("/proximo", { pacientes: pacientes });
+       }  catch (error) {
+           console.error(error);
+           return res.status(404).json({msg:"fallo"});
+         }
+       
+   });
+
+pacienteHtmlRouter.get("/consulta", async (req, res) => {
+ let id=req.query.id;
+    try {
+       
+        const results = await ejecutarConsulta("SELECT DATE_FORMAT(nacimiento_paciente, '%d/%m/%Y') AS fecha_formateada_nacimiento, paciente.* FROM paciente WHERE id_paciente="+id);
+         //
+        
+        return res.status(200).render("pacientealta", { paciente: results,modificar:false});
+    }  catch (error) {
+        console.error(error);
+        return res.status(404).json({msg:"fallo"});
+      }
+    
+});
+
+pacienteHtmlRouter.get("/modificar", async (req, res) => {
+    let id=req.query.id;
+       try {
+          
+           const results = await ejecutarConsulta("SELECT DATE_FORMAT(nacimiento_paciente, '%d/%m/%Y') AS fecha_formateada_nacimiento, paciente.* FROM paciente WHERE id_paciente="+id);
+            //
+           
+           return res.status(200).render("pacientealta", { paciente: results ,modificar:true});
+       }  catch (error) {
+           console.error(error);
+           return res.status(404).json({msg:"fallo"});
+         }
+       
+   });
+
+pacienteHtmlRouter.post("/alta", async (req, res) => {
 
     let obj = req.body;
     console.log("obj", obj);
 
-    
     const {
-        paciente_nombre,
-        paciente_apellido,
-        paciente_dni,
-        paciente_peso,
-        paciente_altura,
-        paciente_edad,
-        paciente_nacimiento,
-        paciente_talle,
-        paciente_contacto,
-        paciente_email
+        nombre_paciente,
+        apellido_paciente,
+        dni_paciente,
+        peso_paciente,
+        altura_paciente,
+        edad_paciente,
+        nacimiento_paciente,
+        talle_paciente,
+        contacto_paciente,
+        email_paciente
       } = req.body;
     
-      const sql = `INSERT INTO paciente  VALUES (0,'${paciente_nombre}', '${paciente_apellido}', '${paciente_dni}', '${paciente_peso}', '${paciente_altura}', '${paciente_edad}', '${paciente_nacimiento}', '${paciente_talle}', '${paciente_contacto}', '${paciente_email}')`;
+      const sql = `INSERT INTO paciente (id_paciente, nombre_paciente, apellido_paciente, dni_paciente, peso_paciente, altura_paciente, edad_paciente, nacimiento_paciente, talle_paciente, contacto_paciente, email_paciente) VALUES (0, '${nombre_paciente}', '${apellido_paciente}', ${dni_paciente}, ${peso_paciente}, ${altura_paciente}, ${edad_paciente}, '${nacimiento_paciente}', ${talle_paciente}, '${contacto_paciente}', '${email_paciente}')`;
+    
       console.log(sql);
       try {
         const v = await ejecutarConsulta(sql);
@@ -129,14 +212,21 @@ pacienteHtmlRouter.delete("/:pid", async (req, res) => {
 });
 
 pacienteHtmlRouter.put("/:pid", async (req, res) => {
-    let pid = req.params.pid;
     let obj = req.body;
-    let agenda = await Service.updateOne(pid, obj.agenda);
-    if (agenda) {
-        let agenda = await Service.getAll();
-        agenda = JSON.parse(JSON.stringify(agenda));
-        return res.status(200).render("home", { agendaos: agenda });
-    } else {
-        return res.status(404).json({ status: "error", msg: `No Existe un agendao con ID: ${pid}`, data: {} });
-    }
+    console.log("obj", obj);
+    console.log("PUT");
+    const {
+        
+      } = req.body;
+
+    // let pid = req.params.pid;
+    // let obj = req.body;
+    // let agenda = await Service.updateOne(pid, obj.agenda);
+    // if (agenda) {
+    //     let agenda = await Service.getAll();
+    //     agenda = JSON.parse(JSON.stringify(agenda));
+    //     return res.status(200).render("home", { agendaos: agenda });
+    // } else {
+    //     return res.status(404).json({ status: "error", msg: `No Existe un agendao con ID: ${pid}`, data: {} });
+    // }
 });
