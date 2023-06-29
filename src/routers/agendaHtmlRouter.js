@@ -216,7 +216,8 @@ agendaHtmlRouter.post('/alta',async (req, res) => {
                 const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%d/%m/%Y') AS fecha_formateada, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2,3,5,6));");
                 //console.log(results);
                 //redirecciona a
-                return res.status(200).render("agendaalta", { agenda: results});
+                
+                return res.status(200).render("agendaalta");
             }  catch (error) {
                 console.error(error);
                 return res.status(404).json({msg:"fallo"});
@@ -235,6 +236,7 @@ agendaHtmlRouter.post('/alta',async (req, res) => {
         try {
             const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%d/%m/%Y') AS fecha_formateada, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2,3,5,6));");
             //console.log(results);
+            window.location.reload();
           
             return res.status(200).render("agenda", { agenda: results});
         }  catch (error) {
