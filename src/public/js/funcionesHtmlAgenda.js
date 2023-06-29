@@ -21,9 +21,13 @@ const asignarProximaCita = () => {
         // data: formData,
         success: function (response) {
           if (reload == "true") {
+            console.log(reload)
             window.location.reload();
+            console.log("recarga la pagina")
           } else {
+            console.log(reload)
             console.log("NO la pagina")
+            resolve(response);
           }
         },
         error: function (xhr, status, error) {

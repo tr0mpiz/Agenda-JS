@@ -62,7 +62,7 @@ agendaHtmlRouter.get("/", async (req, res) => {
             return res.status(200).render("agenda", { agenda: results ,fecha:fecha,maniana:maniana,pactadas:pactadas,hoy:hoy});
         }  catch (error) {
             console.error(error);
-            return res.status(404).json({msg:"fallo"});
+            return res.status(404).json({msg:"fallo",error:error});
           }
     
     

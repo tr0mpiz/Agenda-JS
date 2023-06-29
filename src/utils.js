@@ -38,12 +38,16 @@ import mysql from "mysql"
 
 export const host = "localhost"
 export const user = "root"
+export const password = ""
+export const database = "pro-run"
+export const port = 3306
 
 export const con = mysql.createConnection({
   host: host,
   user: user,
   password: "",
-  database : 'pro-run'
+  database : 'pro-run',
+  port: port
 });
 
 // Establece la conexión
