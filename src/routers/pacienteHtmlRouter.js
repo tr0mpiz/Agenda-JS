@@ -74,7 +74,7 @@ pacienteHtmlRouter.get("/siguiente", async (req, res) => {
    
 });
 
-pacienteHtmlRouter.get("/enrecepcion", async (req, res) => {
+pacienteHtmlRouter.get("/taller", async (req, res) => {
     let id=req.query.id;
        try {
             let fecha = new Date();
