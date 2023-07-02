@@ -1,4 +1,5 @@
 
+
 function setActiveClass() {
     // Obtener la URL actual
     var currentUrl = window.location.href;
@@ -22,3 +23,18 @@ function setActiveClass() {
 
 setActiveClass();
 
+
+function showBootstrapToast(title, message, duration) {
+  
+  var toast = document.getElementById("toast");
+  var toastTitle = toast.querySelector(".me-auto");
+  var toastBody = toast.querySelector(".toast-body");
+  
+  toast.classList.add("show");
+  toastTitle.textContent = title;
+  toastBody.textContent = message;
+
+  setTimeout(function() {
+    toast.classList.remove("show");
+  }, duration);
+}

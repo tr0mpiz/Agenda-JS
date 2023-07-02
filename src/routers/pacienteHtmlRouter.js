@@ -10,6 +10,26 @@ import { isUser } from "../middleware/Helper.js";
 export const pacienteHtmlRouter = express.Router();
 
 //const Service = new agendaService();
+pacienteHtmlRouter.post('/guardar-dibujo', (req, res) => {
+    const { image } = req.body;
+    const base64Data = image.replace(/^data:image\/png;base64,/, '');
+    const fileName = 'dibujo.png';
+    const filePath = path.join(__dirname, fileName);
+  
+    fs.writeFile(filePath, base64Data, 'base64', err => {
+      if (err) {
+
+        console.error('Error al guardar el dibujo en el servidor:', err);
+        //esperar 5 segundos antes de responder
+        setTimeout(() => {
+            res.status(500).json({ error: 'Error al guardar el dibujo en el servidor' });
+        }, 5000);
+      } else {
+        console.log('Dibujo guardado en el servidor:', filePath);
+        res.json({ message: 'Dibujo guardado correctamente' });
+      }
+    });
+  });
 
 pacienteHtmlRouter.get("/alta", isUser, async (req, res) => {
     try {
@@ -29,8 +49,8 @@ pacienteHtmlRouter.get("/", async (req, res) => {
     
     if (dni) {
         try {
-            const paciente = await ejecutarConsulta(`SELECT DATE_FORMAT(nacimiento_paciente, '%d/%m/%Y') AS fecha_formateada, paciente.* FROM paciente WHERE dni_paciente = '${dni}'`);
-            
+            const paciente = await ejecutarConsulta(`SELECT DATE_FORMAT(nacimiento_paciente, '%Y-%m-%dT%H:%i:%s') AS nacimiento_paciente,nombre_paciente,apellido_paciente,contacto_paciente  FROM paciente WHERE dni_paciente = '${dni}'`);
+            console.log(paciente);
             return res.status(200).json(paciente);
         }  catch (error) {
             console.log("nno");
@@ -39,7 +59,7 @@ pacienteHtmlRouter.get("/", async (req, res) => {
     }
     try {
        
-        const results = await ejecutarConsulta("SELECT DATE_FORMAT(nacimiento_paciente, '%d/%m/%Y') AS fecha_formateada, paciente.* FROM paciente");
+        const results = await ejecutarConsulta("SELECT DATE_FORMAT(nacimiento_paciente, '%d/%m/%Y') AS nacimiento_paciente, paciente.* FROM paciente");
         console.log(results);
 
         return res.status(200).render("paciente", { pacientes: results });
@@ -109,9 +129,19 @@ pacienteHtmlRouter.get("/consulta", async (req, res) => {
 
 pacienteHtmlRouter.get("/modificar", async (req, res) => {
     let id=req.query.id;
+
        try {
           
-           const results = await ejecutarConsulta("SELECT DATE_FORMAT(nacimiento_paciente, '%d/%m/%Y') AS fecha_formateada_nacimiento, paciente.* FROM paciente WHERE id_paciente="+id);
+           let query = `SELECT DATE_FORMAT(nacimiento_paciente, '%Y-%m-%d') AS fecha_formateada_nacimiento, paciente.* FROM paciente`;
+           if (id) {
+               query = query + ` WHERE id_paciente=${id}`;
+           }else{
+              if (req.query.dni) {
+                  query = query + ` WHERE dni_paciente=${req.query.dni}`;
+              }
+           }
+           const results = await ejecutarConsulta(query);
+
             //
            
            return res.status(200).render("pacientealta", { paciente: results ,modificar:true});
@@ -137,29 +167,48 @@ pacienteHtmlRouter.post("/alta", async (req, res) => {
         nacimiento_paciente,
         talle_paciente,
         contacto_paciente,
-        email_paciente
+        email_paciente,
+        id_paciente
+
       } = req.body;
-    
-      const sql = `INSERT INTO paciente (id_paciente, nombre_paciente, apellido_paciente, dni_paciente, peso_paciente, altura_paciente, edad_paciente, nacimiento_paciente, talle_paciente, contacto_paciente, email_paciente) VALUES (0, '${nombre_paciente}', '${apellido_paciente}', ${dni_paciente}, ${peso_paciente}, ${altura_paciente}, ${edad_paciente}, '${nacimiento_paciente}', ${talle_paciente}, '${contacto_paciente}', '${email_paciente}')`;
-    
-      console.log(sql);
-      try {
-        const v = await ejecutarConsulta(sql);
-        console.log('Paciente guardado correctamente');
+      
+      if(id_paciente){  
+        console.log("modificando paciente");
+        const sql = `UPDATE paciente SET nombre_paciente='${nombre_paciente}', apellido_paciente='${apellido_paciente}', dni_paciente=${dni_paciente}, peso_paciente=${peso_paciente}, altura_paciente=${altura_paciente}, edad_paciente=${edad_paciente}, nacimiento_paciente='${nacimiento_paciente}', talle_paciente=${talle_paciente}, contacto_paciente='${contacto_paciente}', email_paciente='${email_paciente}' WHERE id_paciente=${id_paciente}`;
+        console.log(sql);
         try {
-            const results = await ejecutarConsulta('select * from paciente');
-            console.log(results);
-            let rest=1;
-            let links="www.google.com.ar";
-            return res.status(200).render("paciente", { pacientes: results, pagination: rest, links });
+            const v = await ejecutarConsulta(sql);
+            console.log('Paciente modificado correctamente');
+            //recarga la pagina para que se vea el nuevo paciente
+            return res.status(200).redirect("/paciente/");
+
         }  catch (error) {
             console.error(error);
             return res.status(404).json({msg:"fallo"});
-          }
-      } catch (error) {
-        console.error('Error al guardar el paciente: ', error);
-       
-      }
+            }
+        }else{
+            console.log("guardando paciente");
+            const sql = `INSERT INTO paciente (id_paciente, nombre_paciente, apellido_paciente, dni_paciente, peso_paciente, altura_paciente, edad_paciente, nacimiento_paciente, talle_paciente, contacto_paciente, email_paciente) VALUES (0, '${nombre_paciente}', '${apellido_paciente}', ${dni_paciente}, ${peso_paciente}, ${altura_paciente}, ${edad_paciente}, '${nacimiento_paciente}', ${talle_paciente}, '${contacto_paciente}', '${email_paciente}')`;
+            
+            console.log(sql);
+            try {
+                const v = await ejecutarConsulta(sql);
+                console.log('Paciente guardado correctamente');
+                try {
+                    const results = await ejecutarConsulta('select * from paciente');
+                    console.log(results);
+                    let rest=1;
+                    let links="www.google.com.ar";
+                    return res.status(200).render("paciente", { pacientes: results, pagination: rest, links });
+                }  catch (error) {
+                    console.error(error);
+                    return res.status(404).json({msg:"fallo"});
+                }
+            } catch (error) {
+                console.error('Error al guardar el paciente: ', error);
+            
+            }
+        }
       
   
   });
@@ -218,7 +267,7 @@ pacienteHtmlRouter.put("/:pid", async (req, res) => {
     const {
         
       } = req.body;
-
+    
     // let pid = req.params.pid;
     // let obj = req.body;
     // let agenda = await Service.updateOne(pid, obj.agenda);

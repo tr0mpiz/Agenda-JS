@@ -33,15 +33,8 @@
         </div>
         <div class="card-body">
           
-          {{#if paciente.0.id_paciente}}
-            {{#if modificar}}
-              <form  id="paciente-form" method="put">
-            {{/if}}
-          {{else}}
-           <form  id="paciente-form" method="POST">
-          {{/if}}
           
-            
+           <form  id="paciente-form" method="POST" action="/paciente/alta">
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label" for="nombre_paciente">Nombre</label>
               <div class="col-sm-10">
@@ -133,15 +126,28 @@
               </div>
             </div>
             <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="lienzo">Lienzo</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  <span id="lienzo2" class="input-group-text"><i class="bi bi-brush-fill"></i></span>
+                  <canvas id="myCanvas"  class="input-group-text" style="cursor: crosshair" width="500" height="500"></canvas>
+                  <button id="saveButton" class="form-control">Crear plantilla</button>
+
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
               {{#if paciente.0.id_paciente}}
                  {{#if modificar}}
+                 <input value="{{ paciente.0.id_paciente }}" type="text" class="form-control d-none"  id="id_paciente" name="id_paciente" >
                   <div class="col-sm-10 offset-sm-2">
-                    <button type="" class="btn btn-primary">Modificar</button>
+                    <button type="" class="btn btn-warning">Modificar</button>
                   </div>
                 {{/if}}
               {{else}}
+              <input value="0" type="text" class="form-control d-none"  id="id_paciente" name="id_paciente" placeholder="john.doe@example.com" aria-label="john.doe@example.com" aria-describedby="email_paciente2">
                 <div class="col-sm-10 offset-sm-2">
-                  <button type="submit" class="btn btn-primary">Guardar Paciente</button>
+                  <button type="submit" class="btn btn-success">Guardar Paciente</button>
                 </div>
               {{/if}}
              
@@ -160,4 +166,89 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="../js/funcionesHtmlAgenda.js"></script>
 <script src="../js/main.js"></script>
+<script>
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
+
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
+
+// Dibuja los pies
+function drawFeet() {
+  
+// Dibuja el primer pie
+ctx.beginPath();
+ctx.ellipse(125, 200, 100, 150, 0, 0, 2 * Math.PI);
+ctx.stroke(); // Dibuja el óvalo del primer pie
+
+// Dibuja el segundo pie
+ctx.beginPath();
+ctx.ellipse(375, 200, 100, 150, 0, 0, 2 * Math.PI);
+ctx.stroke(); // Dibuja el óvalo del segundo pie
+
+// Dibuja la línea horizontal superior
+ctx.beginPath();
+ctx.moveTo(0, 130); // Punto inicial
+ctx.lineTo(canvas.width, 130); // Línea hasta el final del canvas
+ctx.stroke(); // Dibuja la línea horizontal superior
+
+// Dibuja la línea horizontal inferior
+ctx.beginPath();
+ctx.moveTo(0, 270); // Punto inicial
+ctx.lineTo(canvas.width, 270); // Línea hasta el final del canvas
+ctx.stroke(); // Dibuja la línea horizontal inferior
+}
+
+// Dibuja los pies al cargar la página
+drawFeet();
+
+// Habilitar el dibujo cuando se hace clic en el lienzo
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', stopDrawing);
+canvas.addEventListener('mouseout', stopDrawing);
+
+function startDrawing(e) {
+  isDrawing = true;
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+}
+
+function draw(e) {
+  if (!isDrawing) return;
+
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.stroke();
+
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+}
+
+function stopDrawing() {
+  isDrawing = false;
+}
+
+// Descargar el dibujo al hacer clic en el botón "Descargar"
+const saveButton = document.getElementById('saveButton');
+saveButton.addEventListener('click', downloadCanvas);
+
+function downloadCanvas() {
+  const nombre_paciente = document.getElementById('nombre_paciente').value;
+  const apellido_paciente = document.getElementById('apellido_paciente').value;
+  const dni_paciente = document.getElementById('dni_paciente').value;
+  const image = canvas.toDataURL(dni_paciente + '_' + apellido_paciente + '_' + nombre_paciente + '.png');
+  
+  const a = document.createElement('a');
+  a.href = image;
+  a.download = 'dibujo.png';
+  a.click();
+}
+
+</script>
 {{! <script></script> }}

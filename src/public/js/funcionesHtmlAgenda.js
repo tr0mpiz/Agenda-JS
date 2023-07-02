@@ -49,27 +49,22 @@ dni_paciente.addEventListener('change', async () =>{
     const reload = false;
     const inputNombre_paciente = document.getElementById('nombre_paciente');
     const inputApellido_paciente = document.getElementById('apellido_paciente');
-    const inputNacimiento_paciente = document.getElementById('nacimiento_paciente');
     const inputcontacto_paciente = document.getElementById('contacto_paciente');
-    const inputObservacion_paciente = document.getElementById('observacion_paciente');
 
     const paciente = await peticionAjax(url,method,reload);
 
         if(paciente.length == 0){
             console.log(paciente);
-            inputNombre_paciente.value = "";
-            inputApellido_paciente.value = "";
-            inputNacimiento_paciente.value = "";
-            inputcontacto_paciente.value = "";
-            inputObservacion_paciente.value = "";
+            //crea una fecha con este formato 2023-06-30T00:00:00 con javascript
+            const fechayhora = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            inputNacimiento_paciente.value = fechayhora;
 
         }else{
             console.log(paciente);
             inputNombre_paciente.value = paciente[0].nombre_paciente;
             inputApellido_paciente.value = paciente[0].apellido_paciente;
-            inputNacimiento_paciente.value = paciente[0].nacimiento_paciente;
             inputcontacto_paciente.value = paciente[0].contacto_paciente;
-            inputObservacion_paciente.value = paciente[0].observacion_paciente;
+            
             //pone todo los campos en solo lectura
             inputNombre_paciente.readOnly = true;
             inputApellido_paciente.readOnly = true;

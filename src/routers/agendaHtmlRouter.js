@@ -2,6 +2,7 @@ import express from "express";
 import { con, uploader } from "../utils.js";
 import fs from "fs";
 import { __dirname, __filename,ejecutarConsulta } from "../utils.js";
+import e from "express";
 
 //import { agendaService } from "../services/agenda.services.js";
 //import { agendaModel } from "../DAO/models/agenda.model.js";
@@ -10,12 +11,13 @@ export const agendaHtmlRouter = express.Router();
 
 
 
+
 agendaHtmlRouter.get("/calendario", async (req, res) => {
     let json=req.query.json;
-    console.log(json);
+    //console.log(json);
     if(json==1){
         
-        const citas = await ejecutarConsulta("SELECT  CONCAT(nombre_paciente, ' ', apellido_paciente) AS title, a.comentario_cita AS description, DATE_FORMAT(fecha_cita,'%Y-%m-%d %H:%i:%s') AS start, DATE_ADD(DATE_FORMAT(fecha_cita,'%Y-%m-%d %H:%i:%s'), INTERVAL 30 MINUTE) AS end ,color ,'#ffffff' AS textColor   FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2,3,5,6));");
+        const citas = await ejecutarConsulta("SELECT  CONCAT(nombre_paciente, ' ', apellido_paciente) AS title, a.comentario_cita AS description, DATE_FORMAT(fecha_cita,'%Y-%m-%d %H:%i:%s') AS start, DATE_ADD(DATE_FORMAT(fecha_cita,'%Y-%m-%d %H:%i:%s'), INTERVAL 30 MINUTE) AS end ,color ,'#ffffff' AS textColor,a.id_agenda AS id   FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (6));");
         console.log(citas);
         return res.status(200).json(citas);
     }else{
@@ -45,9 +47,18 @@ agendaHtmlRouter.get("/calendario", async (req, res) => {
 });
 
 agendaHtmlRouter.get("/", async (req, res) => {
-    
+    let id=req.query.id;
+    if(id){
         try {
-            const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(fecha_cita,'%Y-%m-%d %H:%i:%s') AS fecha_cita, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2,3,5,6));");
+            const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(fecha_cita,'%Y-%m-%d %H:%i:%s') AS fecha_cita, e.descripcion,b.contacto_paciente FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda = "+id);          
+            return res.status(200).json(results);
+        }  catch (error) {
+            console.error(error);
+            return res.status(404).json({msg:"fallo",error:error});
+          }
+    }else{
+        try {
+            const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(fecha_cita,'%H:%i') AS hora, DATE_FORMAT(fecha_cita,'%d/%m/%y') AS fecha_cita, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2,3,5,6) order by fecha_cita);");
             const pactadas = await ejecutarConsulta("SELECT count(*) AS pactadas FROM agenda_estados WHERE id_estado = 1");
             const fechaCita = new Date();
             fechaCita.setDate(fechaCita.getDate() + 1);
@@ -64,11 +75,12 @@ agendaHtmlRouter.get("/", async (req, res) => {
             console.error(error);
             return res.status(404).json({msg:"fallo",error:error});
           }
-    
+    }
     
 
    
 });
+
 
 agendaHtmlRouter.get("/modificar", async (req, res) => {
     let id=req.query.id;
@@ -127,7 +139,7 @@ agendaHtmlRouter.get("/alta", async (req, res) => {
     if(id){
         let id=req.query.id;
         console.log(id);
-        let agendaydatosdepaciente = await ejecutarConsulta(`SELECT a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%Y-%m-%dT%H:%i:%s') AS nacimiento_paciente, DATE_FORMAT(fecha_cita,'%Y-%m-%dT%H:%i:%s') AS fecha_cita_formateada , DATE_FORMAT(proxima_cita,'%Y-%m-%dT%H:%i:%s') AS proxima_cita, color FROM agenda a, paciente b WHERE a.id_paciente=b.id_paciente AND a.id_agenda=${id}`);
+        let agendaydatosdepaciente = await ejecutarConsulta(`SELECT a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%Y-%m-%d %H:%i:%s') AS nacimiento_paciente, DATE_FORMAT(fecha_cita,'%Y-%m-%dT%H:%i:%s') AS fecha_cita_formateada , DATE_FORMAT(proxima_cita,'%Y-%m-%dT%H:%i:%s') AS proxima_cita, color FROM agenda a, paciente b WHERE a.id_paciente=b.id_paciente AND a.id_agenda=${id}`);
         
         console.log(agendaydatosdepaciente);
         return res.status(200).render("agendaalta", { agenda: agendaydatosdepaciente });
@@ -155,10 +167,12 @@ agendaHtmlRouter.get("/alta", async (req, res) => {
 
 
 agendaHtmlRouter.post('/alta',async (req, res) => {
-    
+    // console.log(req)
     let obj = req.body;
-    //console.log("obj", obj);
-    
+    console.log("hola")
+    console.log("ksajhdkjahsd",obj)
+    console.log("obj", JSON.parse(JSON.stringify(obj)));
+
     const {
       id_agenda,
       fecha_cita,
@@ -179,15 +193,14 @@ agendaHtmlRouter.post('/alta',async (req, res) => {
     //valida si tiene valor id_agenda
     
     //crea un select donde busque en la tabla agenda si el id_agenda existe
-    const sqlAgendaExiste = await ejecutarConsulta(`SELECT * FROM agenda WHERE id_agenda = ${id_agenda}`);
-   
+  
     if( id_agenda == 0 ){
 
         
         try {
             console.log("entro al try");
             const sqlPacienteExiste = await ejecutarConsulta(`SELECT * FROM paciente WHERE dni_paciente = ${dni_paciente}`);
-            
+            console.log("sqlPacienteExiste", sqlPacienteExiste);
             
             if(sqlPacienteExiste.length > 0 ){
                 
@@ -195,7 +208,7 @@ agendaHtmlRouter.post('/alta',async (req, res) => {
                 const insertAgenda = await ejecutarConsulta(sqlAgenda);
                 console.log('INSERT agenda ');
             }else{
-                const insertPaciente = await ejecutarConsulta(`INSERT INTO paciente (nombre_paciente, apellido_paciente, dni_paciente, peso_paciente, altura_paciente, edad_paciente, nacimiento_paciente, talle_paciente, contacto_paciente, email_paciente) VALUES ('${nombre_paciente}', '${apellido_paciente}', ${dni_paciente}, ${peso_paciente}, ${altura_paciente}, ${edad_paciente}, '${nacimiento_paciente}', ${talle_paciente}, ${contacto_paciente}, '${email_paciente}')`);
+                const insertPaciente = await ejecutarConsulta(`INSERT INTO paciente (nombre_paciente, apellido_paciente, dni_paciente, peso_paciente, altura_paciente, edad_paciente, nacimiento_paciente, talle_paciente, contacto_paciente, email_paciente) VALUES ('${nombre_paciente}', '${apellido_paciente}', ${dni_paciente}, 0, 0,0, '2001-01-01 06:30:00',0, ${contacto_paciente}, 'ejemplo@ejemplo.com')`);
                 const ultimoPaciente = await ejecutarConsulta("Select max(id_paciente) as ultimopaciente from paciente"); 
                 console.log("ultimo : "+ultimoPaciente[0].ultimopaciente);
                 const sqlAgenda = `INSERT INTO agenda (id_paciente, fecha_cita, proxima_cita, comentario_cita, color) VALUES (${ultimoPaciente[0].ultimopaciente}, '${fecha_cita}', '${proxima_cita}', '${comentario_cita}', '${color_agenda}')`;
@@ -212,40 +225,24 @@ agendaHtmlRouter.post('/alta',async (req, res) => {
             console.log('INSERT agenda_estados');
             
             
-            try {
-                const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%d/%m/%Y') AS fecha_formateada, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2,3,5,6));");
-                //console.log(results);
-                //redirecciona a
-                
-                return res.status(200).render("agendaalta");
-            }  catch (error) {
-                console.error(error);
-                return res.status(404).json({msg:"fallo"});
-              }
+           
           } catch (error) {
             console.error('Error al guardar el paciente: ', error);
            
           }
+
+         
         
     }else{
         console.log("entro al else");
-            const sqlAgendaUpdate = await ejecutarConsulta(`UPDATE agenda SET fecha_cita = '${fecha_cita}', proxima_cita = '${proxima_cita}', comentario_cita = '${comentario_cita}', color='${color_agenda}' WHERE id_agenda = ${id_agenda}`);
-            const sqlPacienteUpdate = await ejecutarConsulta(`UPDATE paciente SET nombre_paciente = '${nombre_paciente}', apellido_paciente = '${apellido_paciente}', dni_paciente = ${dni_paciente}, peso_paciente = ${peso_paciente}, altura_paciente = ${altura_paciente}, edad_paciente = ${edad_paciente}, nacimiento_paciente = '${nacimiento_paciente}', talle_paciente = ${talle_paciente}, contacto_paciente = ${contacto_paciente}, email_paciente = '${email_paciente}' WHERE id_paciente = ${sqlAgendaExiste[0].id_paciente}`);
+            const sqlAgendaUpdate = await ejecutarConsulta(`UPDATE agenda SET fecha_cita = '${fecha_cita}',comentario_cita = '${ comentario_cita }',color ='${ color_agenda}' WHERE id_agenda = ${id_agenda}`);
+            
             console.log(`UPDATE agenda SET fecha_cita = '${fecha_cita}', proxima_cita = '${proxima_cita}', comentario_cita = '${comentario_cita}' WHERE id_agenda = ${id_agenda}`);
-            console.log("sqlAgendaUpdate", sqlAgendaUpdate);
-        try {
-            const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%d/%m/%Y') AS fecha_formateada, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2,3,5,6));");
-            //console.log(results);
-            window.location.reload();
-          
-            return res.status(200).render("agenda", { agenda: results});
-        }  catch (error) {
-            console.error(error);
-            return res.status(404).json({msg:"fallo"});
-          }
+            //console.log("sqlAgendaUpdate", sqlAgendaUpdate);
+        
     }
-
     
+    return res.redirect("/agenda/calendario");
 
    
 

@@ -1,5 +1,5 @@
 <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">AGENDA /</span> CONSULTA </h4>
-<div class="container">
+<div class="container agendacontenedor">
   <div class="row">
        <div class="col-md-3 col-12 mb-4">
         <div class="card">
@@ -129,6 +129,7 @@
                         <tr>
                             <th>Id cita</th>
                             <th>Fecha cita</th>
+                            <th>Hora</th>
                             <th>Nombre Paciente</th>
                             <th>Apellido Paciente</th>
                             <th>DNI Paciente</th>
@@ -141,6 +142,7 @@
                         <tr>
                           <th>Id cita</th>
                           <th>Fecha cita</th>
+                          <th>Hora</th>
                           <th>Nombre Paciente</th>
                           <th>Apellido Paciente</th>
                           <th>DNI Paciente</th>
@@ -155,16 +157,17 @@
                       <tr id="paciente-{{this.id_agenda}}">
                         <td>{{this.id_agenda}}</td>
                         <td>{{this.fecha_cita}}</td>
+                        <td>{{this.hora}}</td>
                         <td>{{this.nombre_paciente}}</td>
                         <td>{{this.apellido_paciente}}</td>
-                        <td>{{this.dni_paciente}}</td>
+                        <td><a href="/paciente/modificar?dni={{this.dni_paciente}}">{{this.dni_paciente}}</a></td>
                         <td>{{this.contacto_paciente}}</td>
                         <td><span class="badge bg-white text-primary">{{this.descripcion}}</span></td>
                         <td>
                           <div class="btn-group btn-group-horizontal">
                             <button data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bx bx-trash bx-xs' ></i> <span>Eliminar Cita</span>" onclick="peticionAjax('/agenda/eliminar?id={{this.id_agenda}}','DELETE','true')" class="btn btn-icon btn-outline-danger m-1"><i class="bi bi-trash"></i></button>
                             <button data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bx bx-chair bx-xs' ></i> <span>Confirmar asistencia</span>"  onclick="peticionAjax('/agenda/ensala?id={{this.id_agenda}}','GET','true')" class="btn btn-icon btn-outline-success m-1"><i class="bx bx-chair"></i></button>
-                            <a data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bx bx-pencil bx-xs' ></i> <span>Modificar Cita</span>" href="/agenda/alta?id={{this.id_agenda}}"  class="btn btn-icon btn-outline-primary m-1"><i class="bi bi-pencil-fill"></i></a>
+                            {{!-- <a data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bx bx-pencil bx-xs' ></i> <span>Modificar Cita</span>" href="/agenda/alta?id={{this.id_agenda}}"  class="btn btn-icon btn-outline-primary m-1"><i class="bi bi-pencil-fill"></i></a> --}}
                           </div>
                         </td>
                         

@@ -15,28 +15,18 @@
             <th>Talle</th>
             <th>Contacto</th>
             <th>Email</th>
-            <th>Acciones</th>
           </tr>
         </thead>
         <tbody class="table-border-bottom-0">
 
           {{#each pacientes}}
                 <tr id="paciente-{{this.id_paciente}}">
-                  <td>{{this.dni_paciente}}</td>
-                  <td><i class=""></i> <strong>{{this.nombre_paciente}}</strong></td>
+                  <td><a href="/paciente/modificar?dni={{this.dni_paciente}}">{{this.dni_paciente}}</a></td>
+                    <td><i class=""></i> <strong>{{this.nombre_paciente}}</strong></td>
                     <td><i class=""></i> <strong>{{this.apellido_paciente}}</strong></td>
                     <td>{{this.talle_paciente}}</td>
                     <td><a target="_blank"  href="https://wa.me/{{this.contacto_paciente}}">{{this.contacto_paciente}}<a/></td>
                     <td><span class="badge bg-label-primary me-1">{{this.email_paciente}}</span></td>
-                    <td>
-                      <div class="dropdown">
-                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="bx bx-dots-vertical-rounded"></i></button>
-                        <div class="dropdown-menu">
-                          <a class="dropdown-item" href="" onclick="borrarProductoHtml('{{this.id_paciente}}')" ><i class="bx bx-edit-alt me-1"></i> Edit</a>
-                          <a class="dropdown-item" href="" onclick="borrarProductoHtml('{{this.id_paciente}}')"><i class="bi bi-trash3-fill"></i> Delete</a>
-                        </div>
-                      </div>
-                    </td>
                 </tr>
             {{/each}}
         </tbody>

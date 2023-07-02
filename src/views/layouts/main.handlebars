@@ -53,44 +53,89 @@
 
 
 <body>
-   <!-- Modal -->
-   <div class="modal" id="modal-event" tabindex="-1" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modal-title"></h5>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col mb-3">
-              <label for="event-title" class="form-label">Paciente</label>
-              <input type="text" id="event-title" class="form-control" readonly >
-            </div>
-          </div>
-          <div class="row g-2">
-            <div class="col mb-0">
-              <label for="event-descriptio" class="form-label"   >Descripcion</label>
-              <textarea name="" id="event-description" class="form-control" readonly cols="30" rows="10"></textarea>
-            </div>
-            
-          </div>
-          <div class="row g-2">
-            <div class="col mb-0">
-              <label  class="form-label">Fecha inicio Cita</label>
-               <input type="datepicker" id="event-start" readonly class="form-control">
-            </div>
-            <div class="col mb-0">
-              <label class="form-label">Fecha fin Cita</label>
-              <input type="datepicker" id="event-end" readonly class="form-control">
-            </div>
-          </div>
-        </div>
-        {{!-- <div class="modal-footer">
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div> --}}
-      </div>
+  {{!-- TOAST --}}
+  <div id="toast" class="bs-toast toast toast-placement-ex m-2 fade bg-primary top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+    <div class="toast-header">
+      <i class="bx bx-bell me-2"></i>
+      <div class="me-auto fw-semibold">Bootstrap</div>
+      <small>Ahora</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Fruitcake chocolate bar tootsie roll gummies gummies jelly beans cake.
     </div>
   </div>
+  
+  {{!-- TOAST --}}
+  <!-- Modal -->
+  
+    
+      <div class="modal" id="modal-event" tabindex="-1" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <form id="add-event" method="POST" action="">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modal-title-add"></h5>
+            </div>
+            <input class="d-none"  id="id_agenda" value="0" name="id_agenda">
+            <div class="modal-body">
+              <div class="row g-2">
+                <div class="col mb-0">
+                  <label  class="form-label">Fecha inicio Cita</label>
+                  <input type="datepicker" id="fecha_cita" name="fecha_cita"  class="form-control">
+                </div>
+                <div class="col mb-0">
+                  <label class="form-label">Fecha fin Cita</label>
+                  <input type="datepicker" id="proxima_cita" name="proxima_cita" class="form-control">
+                </div>
+                <div class="col mb-0">
+                  <label class="form-label">Colora</label>
+                  <input class="form-control"  id="color_agenda" name="color_agenda" type="color" value="#666EE8" id="html5-color-input">
+                </div>
+                
+                     
+              </div>
+              <div class="row">
+                <div class="col mb-3">
+                  <label for="dni_paciente" class="form-label">D.N.I</label>
+                  <input type="text" id="dni_paciente" name="dni_paciente" class="form-control paste" required  >
+                </div>
+                <div class="col mb-3">
+                  <label for="nombre_paciente" class="form-label">Nombre</label>
+                  <input type="text" id="nombre_paciente" name="nombre_paciente" class="form-control paste" required >
+                </div>
+                <div class="col mb-3">
+                  <label for="apellido_paciente" class="form-label">Apellido</label>
+                  <input type="text" id="apellido_paciente" name="apellido_paciente" class="form-control paste" required  >
+                </div>
+                <div class="col mb-3">
+                  <label for="contacto_paciente" class="form-label">Telefono</label>
+                  <input type="text" id="contacto_paciente" name="contacto_paciente" class="form-control paste" required  >
+                </div>
+
+              </div>
+              <div class="row g-2">
+                <div class="col mb-0">
+                  <label for="event-descriptio" class="form-label"   >Observacion</label>
+                  <textarea  id="comentario_cita" class="form-control" name="comentario_cita"  cols="30" rows="10">Sin comentarios</textarea>
+                </div>
+                
+              </div>
+              <div class="row g-2 m-2">
+               <div class="col mb-0">
+                  <button type="submit" class="btn btn-primary" id="add-even-submit">Agregar Cita</button>
+                </div>
+              </div>
+              
+            </div>
+            {{!-- <div class="modal-footer">
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div> --}}
+          </div>
+          </form>
+        </div>
+      </div>
+    
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
       <div class="layout-container">
@@ -131,14 +176,14 @@
                 <div data-i18n="Account Settings">Agenda</div>
               </a>
               <ul class="menu-sub">
-                <li class="menu-item">
+                {{!-- <li class="menu-item">
                   <a href="/agenda/alta" class="menu-link">
                     <div data-i18n="Account">Alta</div>
                   </a>
-                </li>
+                </li> --}}
                 <li class="menu-item">
                   <a href="/agenda" class="menu-link">
-                    <div data-i18n="Notifications">Consulta</div>
+                    <div data-i18n="Notifications">Sala de Espera</div>
                   </a>
                 </li>
                 <li class="menu-item">
@@ -166,7 +211,7 @@
                 </li>
                 <li class="menu-item">
                   <a href="/paciente/siguiente" class="menu-link" >
-                    <div data-i18n="Basic">Siguiente</div>
+                    <div data-i18n="Basic">Sala de Espera</div>
                   </a>
                 </li>
               </ul>
@@ -204,17 +249,14 @@
 
             <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
               <!-- Search -->
-              <div class="navbar-nav align-items-center">
-                <div class="nav-item d-flex align-items-center">
-                  <i class="bx bx-search fs-4 lh-0"></i>
-                  <input
-                    type="text"
-                    class="form-control border-0 shadow-none"
-                    placeholder="Buscar..."
-                    aria-label="Buscar..."
-                  />
+              <form action="/paciente/modificar" method="GET">
+                <div class="navbar-nav align-items-center">
+                  <div class="nav-item d-flex align-items-center">
+                    <i class="bx bx-search fs-4 lh-0"></i>
+                    <input type="text" class="form-control border-0 shadow-none" id="dni" placeholder="Buscar..." aria-label="Buscar..." name="dni">
+                  </div>
                 </div>
-              </div>
+              </form>
               <!-- /Search -->
 
               <ul class="navbar-nav flex-row align-items-center ms-auto">
@@ -340,7 +382,7 @@
     <!-- / Layout wrapper -->
 
     <div class="buy-now">
-      <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-danger btn-buy-now">Atrás</a>
+      <a href="javascript:void(0);" onclick="window.history.back();" class="btn btn-primary btn-buy-now">Atrás</a>
 
     </div>
 
@@ -374,7 +416,7 @@
     <script src="https://cdn.datatables.net/plug-ins/1.11.1/i18n/Spanish.json"></script>
    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+    <script src="../js/funcionesHtmlAgenda.js"></script>
     
   
   <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'></script>
@@ -388,14 +430,35 @@
         //si existe el id de la tabla, la inicializo
         if($('#dataTable').length)
         {
-          $('#dataTable').DataTable({
-            "order": [[ 0, "desc" ]],
+          if($('.agendacontenedor').length)
+          {
+            $('#dataTable').DataTable({
+            //ordenar por posicion 1,2
+            "order": [[ 1, "asc" ],[ 2, "asc" ]],
+            //sacale el ordenamiento cuando esta en la url tenga /agenda
+            //"ordering": false,
+
             // ponelo en español
             "language": {
               "url": "../assets/vendor/libs/datatables/datatables.es.json"
             }
             
           });
+          }else{
+            $('#dataTable').DataTable({
+            //ordenar por posicion 1,2
+            //"order": [[ 1, "asc" ]],
+            //sacale el ordenamiento cuando esta en la url tenga /agenda
+            //"ordering": false,
+
+            // ponelo en español
+            "language": {
+              "url": "../assets/vendor/libs/datatables/datatables.es.json"
+            }
+            
+          });
+          }
+          
         }
         
         //
@@ -404,6 +467,55 @@
         
         if($('#calendar').length)
         {
+          
+
+          document.addEventListener('paste', function(event) {
+
+             const inputFieldsmodalmodal = document.querySelectorAll('#modal-event');
+              inputFieldsmodalmodal.forEach(function(inputField) {
+                  // Obtener el texto pegado
+                  const clipboardData = event.clipboardData || window.clipboardData;
+                  const pastedText = clipboardData.getData('text');
+
+                  // Obtener el nombre del campo de entrada
+                  const fieldName = inputField.id;
+                  
+                  // Asignar el texto pegado al campo de entrada correspondiente
+                  switch (fieldName) {
+                    case 'dni_paciente':
+                      document.getElementById('dni_paciente').value = pastedText.split(',')[0];
+                      //darle evento change para que busque el paciente
+                      document.getElementById('dni_paciente').dispatchEvent(new Event('change'));
+                      
+                      break;
+                    case 'nombre_paciente':
+                    document.getElementById('nombre_paciente').value = pastedText.split(',')[1];
+                      break;
+                    case 'apellido_paciente':
+                    document.getElementById('apellido_paciente').value = pastedText.split(',')[2];
+                      break;
+                    case 'contacto_paciente':
+                    document.getElementById('contacto_paciente').value = pastedText.split(',')[3];
+                      break;
+                    default:
+                      break;
+                  }
+                  
+
+              });
+            
+            //alert('pegado')
+           
+        
+            
+            // Asignar el texto pegado al campo de entrada correspondiente 5678,nicolas,piersanti,1122529738
+            
+
+            // Prevenir la acción de pegado predeterminada
+            event.preventDefault();
+          });
+        
+
 
           $.ajax({
             url: '/agenda/calendario?json=1',
@@ -430,16 +542,109 @@
                   eventLimit: true,
                   events: events,
                   locale: 'es',
+                  //mostra de otro color el dia de hoy
+                  dayRender: function (date, cell) {
+                    if (date.isSame(moment(), 'day')) {
+                        cell.css("background-color", "#ff9f89");
+                    }
+                  },
                   dayClick: function (date, jsEvent, view) {
-                     // alert('Has hecho click en: '+ date.format());
+
+                    $('#fecha_cita').val(date.format('YYYY-MM-DD HH:mm:ss'));
+                    $('#proxima_cita').val(date.format('YYYY-MM-DD HH:mm:ss'));
+                    $('#modal-title-add').text('Agregar Cita - '+date.format('DD-MM-YYYY HH:mm:ss'));
+                    $('#dni_paciente').text('');
+                    $('#event-description-add').html("");
+                    $('#dni_paciente').val('');
+                    $('#nombre_paciente').val('');
+                    $('#apellido_paciente').val('');
+                    $('#contacto_paciente').val('');
+                    $('#comentario_cita').val('');
+                    $('#id_agenda').val(0);
+                    $('#modal-event').modal('show');
+
+                    //eliminar la clase btn-warninr al boton
+                   
+                    let form = document.getElementById('add-event');
+                    form.action = '/agenda/alta';
+                    let submitButton = form.querySelector('button[type="submit"]');
+                     submitButton.classList.add('btn-primary');
+                    //pone la clase btn-primary
+                    submitButton.classList.remove('btn-danger');
+                    submitButton.textContent = 'Guardar Cita';
+                    
                   }, 
+                  eventDrop: function(event,dayDelta,minuteDelta,allDay,revertFunc) {
+
+                      let fecha_cita = event.start.format('YYYY-MM-DD HH:mm:ss');
+                      let id = event.id;
+                      // crea la variable fecha_cita_fin que sea igual a fecha_cita + 30 minutos
+                     
+                      //console.log(fecha_cita);
+                      
+                      console.log(fecha_cita);
+                      
+                      let url = '/agenda/alta?id='+id;
+                      let data = {
+                        id_agenda: id,
+                        fecha_cita: fecha_cita,
+                      };
+                      $.ajax({
+                        url: url,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: data,
+                        success: function(response){
+                            
+                        }
+                      });
+                      var title = event.title;
+                      var message = 'La cita se movio a la fecha '+fecha_cita;
+                      var duration = 5000; // 5 segundos
+                      
+                      showBootstrapToast(title, message, duration);
+
+
+                  },
                   eventClick: function (calEvent, jsEvent, view) {
-                      $('#event-start').val(calEvent.start.format('DD-MM-YYYY HH:mm'));
-                      $('#event-end').val(calEvent.end.format('DD-MM-YYYY HH:mm'));
-                      $('#modal-title').text(calEvent.title);
-                      $('#event-title').val(calEvent.title);
-                      $('#event-description').html(calEvent.description);
-                      $('#modal-event').modal('show');
+                      console.log(calEvent);
+
+                      $('#fecha_cita').val(calEvent.start.format('YYYY-MM-DD HH:mm:ss'));
+                      $('#proxima_cita').val(calEvent.end.format('YYYY-MM-DD HH:mm:ss'));
+                      $('#modal-title-add').text(calEvent.title);
+                      const id = calEvent.id;
+                      const url = '/agenda?id='+id;
+                      $.ajax({
+                        url: url,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response){
+                          
+                          console.log(response);
+                          $('#dni_paciente').text(response[0].dni_paciente);
+                          $('#id_agenda').val(response[0].id_agenda);
+                          $('#event-description-add').html(response[0].fecha_cita);
+                          $('#dni_paciente').val(response[0].dni_paciente);
+                          $('#nombre_paciente').val(response[0].nombre_paciente);
+                          $('#apellido_paciente').val(response[0].apellido_paciente);
+                          $('#contacto_paciente').val(response[0].contacto_paciente);
+                          $('#comentario_cita').val(response[0].comentario_cita);
+                          $('#modal-event').modal('show');
+                          let form = document.getElementById('add-event');
+                          form.action = '/agenda/alta?id='+$('#id_agenda').val();
+                          let submitButton = form.querySelector('button[type="submit"]');
+                          //ponele la clase btn-warninr al boton
+                          submitButton.classList.add('btn-danger');
+                          //elimina la clase btn-primary
+                          submitButton.classList.remove('btn-primary');
+                          submitButton.textContent = 'Modificar Cita';
+                        },
+                        error: function(xhr, status, error){
+                          console.log(xhr);
+                          console.log(status);
+                          console.log(error);
+                        }
+                      });
                       // hace un modal(show) pero con alguna animacion css
                       
                   }, 
@@ -460,6 +665,7 @@
         }
        
       });
+      
     </script>
 
     <!-- Place this tag in your head or just before your close body tag. -->
