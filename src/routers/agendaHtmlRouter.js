@@ -148,6 +148,24 @@ agendaHtmlRouter.delete("/eliminar", async (req, res) => {
        
    });
 
+   agendaHtmlRouter.get("/entaller", async (req, res) => {
+    let id=req.query.id;
+       try {
+            let fecha = new Date();
+            // formate la fecha en dd/mm/yyyy hh:mm:ss
+            fecha = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear() + " " + fecha.getHours() + ":" + fecha.getMinutes() ;
+            const insertagendaestados = await ejecutarConsulta(`INSERT INTO agenda_estados (id_agenda, id_estado, observacion) VALUES (${id}, 4, 'En Taller horario:${fecha}')`);
+              
+           const pacientes = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%d/%m/%Y') AS fecha_formateada, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2,3,5,6));");
+           
+           return res.status(200).render("agenda", { pacientes: pacientes });
+       }  catch (error) {
+           console.error(error);
+           return res.status(404).json({msg:"fallo"});
+         }
+       
+   });
+
 agendaHtmlRouter.get("/alta", async (req, res) => {
     let id=req.query.id;
     if(id){

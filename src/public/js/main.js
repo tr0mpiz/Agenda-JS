@@ -38,3 +38,11 @@ function showBootstrapToast(title, message, duration) {
     toast.classList.remove("show");
   }, duration);
 }
+
+
+//si la url contiene paciente/siguiente que renderize cada 5 segundos
+if (window.location.href.includes("paciente/siguiente")) {
+  setInterval(function() {
+    window.location.reload();
+  }, 5000);
+}
