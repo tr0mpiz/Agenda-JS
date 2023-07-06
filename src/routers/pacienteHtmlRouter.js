@@ -1,35 +1,31 @@
 import express from "express";
-import { con, uploader } from "../utils.js";
+import { con, upload } from "../utils.js";
 import fs from "fs";
 import { __dirname, __filename,ejecutarConsulta } from "../utils.js";
 import { isUser } from "../middleware/Helper.js";
+
 
 //import { agendaService } from "../services/agenda.services.js";
 //import { agendaModel } from "../DAO/models/agenda.model.js";
 
 export const pacienteHtmlRouter = express.Router();
 
-//const Service = new agendaService();
-pacienteHtmlRouter.post('/guardar-dibujo', (req, res) => {
-    const { image } = req.body;
-    const base64Data = image.replace(/^data:image\/png;base64,/, '');
-    const fileName = 'dibujo.png';
-    const filePath = path.join(__dirname, fileName);
-  
-    fs.writeFile(filePath, base64Data, 'base64', err => {
-      if (err) {
 
-        console.error('Error al guardar el dibujo en el servidor:', err);
-        //esperar 5 segundos antes de responder
-        setTimeout(() => {
-            res.status(500).json({ error: 'Error al guardar el dibujo en el servidor' });
-        }, 5000);
-      } else {
-        console.log('Dibujo guardado en el servidor:', filePath);
-        res.json({ message: 'Dibujo guardado correctamente' });
-      }
-    });
+pacienteHtmlRouter.post('/imagen', upload.single('canvasImage'), (req, res) => {
+    let obj = req.body;
+    console.log("obj", obj);
+
+    const image = obj.image;
+    if (!image) {
+        return res.status(400).json({ status: "error", msg: "No se ha cargado ninguna imagen" });
+    }else{
+        
+        return res.status(200).json({ status: "ok", msg: "Imagen cargada correctamente" });
+    }
+    
+    
   });
+
 
 pacienteHtmlRouter.get("/alta", isUser, async (req, res) => {
     try {
@@ -50,7 +46,7 @@ pacienteHtmlRouter.get("/", async (req, res) => {
     if (dni) {
         try {
             const paciente = await ejecutarConsulta(`SELECT DATE_FORMAT(nacimiento_paciente, '%Y-%m-%dT%H:%i:%s') AS nacimiento_paciente,nombre_paciente,apellido_paciente,contacto_paciente  FROM paciente WHERE dni_paciente = '${dni}'`);
-            console.log(paciente);
+            //console.log(paciente);
             return res.status(200).json(paciente);
         }  catch (error) {
             console.log("nno");
@@ -60,7 +56,7 @@ pacienteHtmlRouter.get("/", async (req, res) => {
     try {
        
         const results = await ejecutarConsulta("SELECT DATE_FORMAT(nacimiento_paciente, '%d/%m/%Y') AS nacimiento_paciente, paciente.* FROM paciente");
-        console.log(results);
+        //console.log(results);
 
         return res.status(200).render("paciente", { pacientes: results });
     }  catch (error) {
@@ -83,7 +79,7 @@ pacienteHtmlRouter.get("/siguiente", async (req, res) => {
         const hoy = await ejecutarConsulta(`SELECT count(*) as hoy FROM agenda WHERE DATE(fecha_cita) = CURDATE()`);
 
         const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(fecha_cita,'%d-%m-%Y %H:%i') AS fecha_cita, DATE_FORMAT(proxima_cita,'%d-%m-%Y %H:%i') AS proxima_cita, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente = b.id_paciente AND a.id_agenda = c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado = 6) AND c.id_estado =2;");
-        console.log(results);
+        //console.log(results);
         
         return res.status(200).render("proximo", { pacientes: results,pactadas:pactadas,maniana:maniana,hoy:hoy,ensala:ensala });
     }  catch (error) {
@@ -214,28 +210,7 @@ pacienteHtmlRouter.post("/alta", async (req, res) => {
   });
 
 
-pacienteHtmlRouter.post("/imagen", uploader.single("thumbnail"), async (req, res) => {
-    let obj = req.body;
-    console.log("obj", obj);
 
-    const file = req.file;
-    if (!file) {
-        return res.status(400).json({ status: "error", msg: "No se ha cargado ninguna imagen" });
-    }
-
-    // let respuesta = await agendao.addagenda(obj.title, obj.description, obj.price, file.filename, obj.code, obj.stock, obj.status, obj.category);
-    console.log("carga", obj.title, obj.description, obj.price, file.filename, obj.code, obj.stock, obj.status, obj.category);
-    let respuesta = await Service.createOne(obj.title, obj.description, obj.price, file.filename, obj.code, obj.stock, obj.status, obj.category);
-
-    if (respuesta.state) {
-        // let agendaos = await agendao.getagendaById(respuesta.id);
-        let agendaos = await Service.getById(respuesta._id);
-        console.log("byId", agendaos);
-        return res.status(200).json({ status: "success", msg: "El agendao fue creado con éxito", data: agendaos.agendao });
-    } else {
-        return res.status(404).json({ status: "error", msg: "El agendao no se pudo crear", data: {} });
-    }
-});
 
 pacienteHtmlRouter.delete("/:pid", async (req, res) => {
     let pid = req.params.pid;

@@ -6,13 +6,12 @@ import { v4 as uuidv4 } from "uuid";
 
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, "public/pictures"));
-    },
-    filename: (req, file, cb) => {
-        // cb(null, quitarEspacios(file.originalname));
-        cb(null, uuidv4() + obtenerExtension(file.originalname));
-    },
+  destination: 'public/pictures/',
+  filename: (req, file, cb) => {
+    const { fecha, dni_paciente, hora } = req.body;
+    const fileName = `${dni_paciente}_${fecha}_${hora}.png`;
+    cb(null, fileName);
+  }
 });
 
 function quitarEspacios(string) {
@@ -27,7 +26,19 @@ function obtenerExtension(nombreArchivo) {
     return "." + partes.pop();
 }
 
-export const uploader = multer({ storage });
+function showCustomToast(toastBody, toastHeader) {
+  
+  // Obtener el elemento toast
+  
+
+  toastBodyElement.innerText = toastBody;
+  toastHeaderElement.innerText = toastHeader;
+
+  var toast = new bootstrap.Toast(toastElement);
+  toast.show();
+}
+export const cartel = showCustomToast;
+export const upload = multer({ storage });
 export const __filename = fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);
 
@@ -67,6 +78,7 @@ export const ejecutarConsulta= (query) => {
 
 
 
+      
 
 ///
 

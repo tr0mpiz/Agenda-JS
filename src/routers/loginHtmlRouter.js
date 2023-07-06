@@ -1,5 +1,5 @@
 import express from "express";
-import { con, uploader } from "../utils.js";
+import { con, upload } from "../utils.js";
 import fs from "fs";
 import { __dirname, __filename,ejecutarConsulta } from "../utils.js";
 

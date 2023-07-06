@@ -1,5 +1,5 @@
 import express from "express";
-import { con, uploader } from "../utils.js";
+import { con, upload } from "../utils.js";
 import fs from "fs";
 import { __dirname, __filename,ejecutarConsulta } from "../utils.js";
 import e from "express";
@@ -9,6 +9,20 @@ import e from "express";
 
 export const agendaHtmlRouter = express.Router();
 
+agendaHtmlRouter.get("/recordatorios", async (req, res) => {
+    try {
+        const fechaCita = new Date();
+        fechaCita.setDate(fechaCita.getDate() + 1);
+        const fechaFormateada = fechaCita.toISOString().slice(0, 10);
+        //hace un select de los pacientes que tienen cita mañana y pasado mañana
+        const maniana = await ejecutarConsulta(`SELECT CONCAT(nombre_paciente, ' ', apellido_paciente) AS nombre, DATE_FORMAT(fecha_cita,'%d/%m/%y') AS fecha_cita, DATE_FORMAT(fecha_cita,'%H:%i') AS hora,id_agenda,contacto_paciente FROM agenda a, paciente b WHERE a.id_paciente=b.id_paciente AND DATE(fecha_cita) = '${fechaFormateada}'`);
+        
+        return res.status(200).json(maniana);
+    } catch (error) {
+        console.error(error);
+        return res.status(404).json({msg:"fallo"});
+        }
+});
 
 
 
