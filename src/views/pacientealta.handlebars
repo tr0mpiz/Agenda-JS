@@ -208,10 +208,9 @@ ctx.stroke(); // Dibuja la línea horizontal inferior
 // Dibuja los pies al cargar la página
 drawFeet();
 
-
 // Habilitar el dibujo cuando se toca el lienzo
-canvas.addEventListener('touchstart', startDrawing);
-canvas.addEventListener('touchmove', draw);
+canvas.addEventListener('touchstart', startDrawing, { passive: false });
+canvas.addEventListener('touchmove', draw, { passive: false });
 canvas.addEventListener('touchend', stopDrawing);
 canvas.addEventListener('touchcancel', stopDrawing);
 
@@ -220,6 +219,7 @@ function startDrawing(e) {
   const touch = e.touches[0];
   const rect = canvas.getBoundingClientRect();
   [lastX, lastY] = [touch.clientX - rect.left, touch.clientY - rect.top];
+  e.preventDefault(); // Evita el desplazamiento de la página durante el dibujo
 }
 
 function draw(e) {
@@ -241,6 +241,7 @@ function draw(e) {
   ctx.stroke();
 
   [lastX, lastY] = [x, y];
+  e.preventDefault(); // Evita el desplazamiento de la página durante el dibujo
 }
 
 function stopDrawing() {
