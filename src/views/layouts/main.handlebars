@@ -263,6 +263,23 @@
                 
 
                 <!-- User -->
+                <li class="nav-item navbar-dropdown dropdown-user dropdown ">
+                  
+                  
+                  <a id="cantidad_recordatorios" class="nav-link dropdown-toggle hide-arrow rounded-pill btn  btn-warning  text-white" href="javascript:void(0);" data-bs-toggle="dropdown">
+                    <span class="tf-icons bx bx-pie-chart-alt" ></span> &nbsp; <span class="align-middle" id="cantidadrecordatorios">0</span>&nbsp;  Recordatorios
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end recordatorios" id="recordatorios">
+                    
+                    {{!-- <li>
+                      <a class="dropdown-item" href="#">
+                        <i class="bx bx-user me-2"></i>
+                        <span class="align-middle">Mi Perfil</span>
+                      </a>
+                    </li> --}}
+                  </ul>
+                </li>
+                <!--/ User -->
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                   <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
@@ -329,7 +346,6 @@
                     
                   </ul>
                 </li>
-                <!--/ User -->
               </ul>
             </div>
           </nav>
@@ -388,7 +404,8 @@
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
-    
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
      <script src="../assets/vendor/js/helpers.js"></script>
 
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
@@ -426,6 +443,28 @@
     
     <script>
       $(document).ready(function() {
+
+        //crea una peticion para recuperar las citas de mañana y pasado mañana y mostralas en el ul que tiene el id recordatorios y la cantidad de recordatorios en el span con el id cantidadRecordatorios
+        $.ajax({
+          url: '/agenda/recordatorios',
+          type: 'GET',
+          dataType: 'json',
+          success: function(data) {
+            const recomendaciones = 'Recorda que tenés que venir con ropa cómoda y calzado de running/deportivo para subir unos minutos a la cinta trotando o caminando y ver tu pisada. Saludos.';
+            //recorre el data y lo muestra en el ul con el id recordatorios\
+            console.log(data);
+            $.each(data, function(index, val) {
+              $('#recordatorios').append('<li class="list-group-item d-flex align-items-center justify-content-between"><div class="text-small"><strong class="d-block">'+val.nombre+'</strong><span class="d-block text-muted">'+val.fecha_cita+' - '+val.hora+'</span></div><div class="ms-2 text-end"><a href="https://api.whatsapp.com/send?phone='+val.contacto_paciente+'&text=Hola '+val.nombre+' este mensaje es un recordatorio para tu cita pactada para el dia '+val.fecha_cita+' hora '+val.hora+'. '+recomendaciones+' ¡Nos vemos pronto!" target="_blank" class="btn btn-sm btn-primary">Enviar</a></div></li>');
+            });
+            //muestra la cantidad de recordatorios en el span con el id cantidadRecordatorios
+            $('#cantidadrecordatorios').html(data.length);
+            
+          },
+          error: function(data) {
+            console.log(data);
+          }
+        });
+
         
         //si existe el id de la tabla, la inicializo
         if($('#dataTable').length)

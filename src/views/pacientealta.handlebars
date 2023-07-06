@@ -125,17 +125,7 @@
                 </div>
               </div>
             </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label" for="lienzo">Lienzo</label>
-              <div class="col-sm-10">
-                <div class="input-group input-group-merge">
-                  <span id="lienzo2" class="input-group-text"><i class="bi bi-brush-fill"></i></span>
-                  <canvas id="myCanvas"  class="input-group-text" style="cursor: crosshair" width="500" height="500"></canvas>
-                  <button id="saveButton" class="form-control">Crear plantilla</button>
-
-                </div>
-              </div>
-            </div>
+            
             <div class="row mb-3">
               {{#if paciente.0.id_paciente}}
                  {{#if modificar}}
@@ -153,7 +143,22 @@
              
             </div>
           </form>
-        
+          <form action="/paciente/imagen" method="POST">
+            <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="lienzo">Lienzo</label>
+              <div class="col-sm-10">
+                <div class="input-group input-group-merge">
+                  
+                  <span id="lienzo2" class="input-group-text"><i class="bi bi-brush-fill"></i></span>
+                  <canvas id="myCanvas"  class="input-group-text" style="cursor: se-resize" width="500" height="500"></canvas>
+                  <div id="backButton" class="form-control" style="cursor:w-resize"> <i class="bi bi-arrow-return-left">Atras</i></div>
+                  <div id="saveButton" class="form-control btn btn-primary">Crear plantilla</div>
+                  
+                  
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -203,6 +208,12 @@ ctx.stroke(); // Dibuja la línea horizontal inferior
 // Dibuja los pies al cargar la página
 drawFeet();
 
+// Habilitar el dibujo cuando se toca el lienzo
+canvas.addEventListener('touchstart', startDrawing);
+canvas.addEventListener('touchmove', draw);
+canvas.addEventListener('touchend', stopDrawing);
+canvas.addEventListener('touchcancel', stopDrawing);
+
 // Habilitar el dibujo cuando se hace clic en el lienzo
 canvas.addEventListener('mousedown', startDrawing);
 canvas.addEventListener('mousemove', draw);
@@ -218,7 +229,7 @@ function draw(e) {
   if (!isDrawing) return;
 
   ctx.strokeStyle = 'black';
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 3;
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
 
@@ -239,16 +250,39 @@ const saveButton = document.getElementById('saveButton');
 saveButton.addEventListener('click', downloadCanvas);
 
 function downloadCanvas() {
-  const nombre_paciente = document.getElementById('nombre_paciente').value;
-  const apellido_paciente = document.getElementById('apellido_paciente').value;
-  const dni_paciente = document.getElementById('dni_paciente').value;
-  const image = canvas.toDataURL(dni_paciente + '_' + apellido_paciente + '_' + nombre_paciente + '.png');
   
-  const a = document.createElement('a');
-  a.href = image;
-  a.download = 'dibujo.png';
-  a.click();
+  //obtener de la url lo que sigue despues del signo ?dni=
+  const dni_paciente = window.location.search.replace("?dni=", "");
+  const fecha = new Date();
+  const fecha_actual = fecha.getDate() + "-" + (fecha.getMonth() +1) + "-" + fecha.getFullYear();
+  const hora_actual = fecha.getHours() + ":" + fecha.getMinutes() + ":" + fecha.getSeconds();
+  console.log(fecha_actual);
+  console.log(hora_actual);
+
+  console.log(dni_paciente);
+  
+  const image = canvas.toDataURL();
+  
+ 
+    const data = {
+      image
+    };
+    console.log(data);
+    // Realizar la solicitud POST al servidor
+    axios.post('/paciente/imagen', data)
+      .then(response => {
+        console.log(response);
+        console.log('Imagen subida correctamente');
+      })
+      .catch(error => {
+        console.error('Error al subir la imagen:', error);
+      });
+
+  
+
+  
 }
+
 
 </script>
 {{! <script></script> }}
