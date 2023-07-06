@@ -151,7 +151,7 @@
                   
                   <span id="lienzo2" class="input-group-text"><i class="bi bi-brush-fill"></i></span>
                   <canvas id="myCanvas"  class="input-group-text" style="cursor: se-resize" width="500" height="500"></canvas>
-                  <div id="backButton" class="form-control" style="cursor:w-resize"> <i class="bi bi-arrow-return-left">Atras</i></div>
+                  <div id="undoButton" class="form-control" style="cursor:w-resize"> <i class="bi bi-arrow-return-left">Atras</i></div>
                   <div id="saveButton" class="form-control btn btn-primary">Crear plantilla</div>
                   
                   
@@ -240,12 +240,41 @@ function draw(e) {
   ctx.lineTo(x, y);
   ctx.stroke();
 
+  strokes.push({ // Registra el trazo realizado
+    startX: lastX,
+    startY: lastY,
+    endX: x,
+    endY: y
+  });
+
   [lastX, lastY] = [x, y];
   e.preventDefault(); // Evita el desplazamiento de la página durante el dibujo
 }
 
 function stopDrawing() {
   isDrawing = false;
+}
+
+// Botón "Atrás"
+const undoButton = document.getElementById('undoButton');
+undoButton.addEventListener('click', undoLastStroke);
+
+function undoLastStroke() {
+  if (strokes.length > 0) {
+    // Borra el último trazo del lienzo
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Elimina el último trazo del registro
+    strokes.pop();
+    
+    // Vuelve a dibujar los trazos restantes
+    strokes.forEach(stroke => {
+      ctx.beginPath();
+      ctx.moveTo(stroke.startX, stroke.startY);
+      ctx.lineTo(stroke.endX, stroke.endY);
+      ctx.stroke();
+    });
+  }
 }
 
 
