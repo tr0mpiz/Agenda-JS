@@ -7,7 +7,7 @@ import { pacienteHtmlRouter } from "./routers/pacienteHtmlRouter.js";
 import { loginHtmlRouter } from "./routers/loginHtmlRouter.js";
 import handlebars from "express-handlebars";
 import path from "path";
-import { con, __dirname,uploader, user } from "./utils.js";
+import { con, __dirname,upload, user } from "./utils.js";
 import { Server } from "socket.io";
 
 
