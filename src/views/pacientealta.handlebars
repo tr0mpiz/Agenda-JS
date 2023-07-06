@@ -151,8 +151,9 @@
                   
                   <span id="lienzo2" class="input-group-text"><i class="bi bi-brush-fill"></i></span>
                   <canvas id="myCanvas"  class="input-group-text" style="cursor: se-resize" width="500" height="500"></canvas>
-                  <div id="undoButton" class="form-control" style="cursor:w-resize"> <i class="bi bi-arrow-return-left">Atras</i></div>
-                  <div id="saveButton" class="form-control btn btn-primary">Crear plantilla</div>
+                  <div id="resetButton" class="form-control btn btn-secondary" style="cursor:w-resize"><i class="bi bi-bootstrap-reboot"></i></div>
+                  <div><input  class="form-control" type="color" id="colorPicker"></div>
+                  <div id="saveButton" class="form-control btn btn-primary">Crear</div>
                   
                   
                 </div>
@@ -178,6 +179,14 @@ const ctx = canvas.getContext('2d');
 let isDrawing = false;
 let lastX = 0;
 let lastY = 0;
+let currentColor = 'black'; // Color inicial
+
+const colorPicker = document.getElementById('colorPicker');
+colorPicker.addEventListener('change', updateColor);
+
+function updateColor() {
+  currentColor = colorPicker.value;
+}
 
 // Dibuja los pies
 function drawFeet() {
@@ -222,6 +231,7 @@ function startDrawing(e) {
   e.preventDefault(); // Evita el desplazamiento de la página durante el dibujo
 }
 
+
 function draw(e) {
   if (!isDrawing) return;
 
@@ -230,7 +240,7 @@ function draw(e) {
   const x = touch.clientX - rect.left;
   const y = touch.clientY - rect.top;
 
-  ctx.strokeStyle = 'black';
+  ctx.strokeStyle = currentColor;
   ctx.lineWidth = 1;
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
@@ -240,41 +250,12 @@ function draw(e) {
   ctx.lineTo(x, y);
   ctx.stroke();
 
-  strokes.push({ // Registra el trazo realizado
-    startX: lastX,
-    startY: lastY,
-    endX: x,
-    endY: y
-  });
-
   [lastX, lastY] = [x, y];
   e.preventDefault(); // Evita el desplazamiento de la página durante el dibujo
 }
 
 function stopDrawing() {
   isDrawing = false;
-}
-
-// Botón "Atrás"
-const undoButton = document.getElementById('undoButton');
-undoButton.addEventListener('click', undoLastStroke);
-
-function undoLastStroke() {
-  if (strokes.length > 0) {
-    // Borra el último trazo del lienzo
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Elimina el último trazo del registro
-    strokes.pop();
-    
-    // Vuelve a dibujar los trazos restantes
-    strokes.forEach(stroke => {
-      ctx.beginPath();
-      ctx.moveTo(stroke.startX, stroke.startY);
-      ctx.lineTo(stroke.endX, stroke.endY);
-      ctx.stroke();
-    });
-  }
 }
 
 
@@ -293,8 +274,15 @@ function downloadCanvas() {
   console.log(hora_actual);
 
   console.log(dni_paciente);
+  //descargar el canvas como imagen
+  const link = document.createElement('a');
+  link.download = "Plantilla_"+dni_paciente + "_" + fecha_actual + "_" + hora_actual + ".png";
+  link.href = canvas.toDataURL();
+  link.click();
+
+  //obtener la imagen del canvas
   
-  const image = canvas.toDataURL();
+  /*const image = canvas.toDataURL();
   
  
     const data = {
@@ -311,11 +299,21 @@ function downloadCanvas() {
         console.error('Error al subir la imagen:', error);
       });
 
-  
+  */
 
   
 }
 
 
+const resetButton = document.getElementById('resetButton');
+resetButton.addEventListener('click', resetCanvas);
+
+function resetCanvas() {
+  // Borra todo el contenido del lienzo
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = 'black';
+  // Vuelve a dibujar solo los pies
+  drawFeet();
+}
 </script>
 {{! <script></script> }}
