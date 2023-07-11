@@ -1,8 +1,8 @@
 import express from "express";
-import { con, upload } from "../utils.js";
 import fs from "fs";
-import { __dirname, __filename,ejecutarConsulta } from "../utils.js";
+import path from "path";
 import { isUser } from "../middleware/Helper.js";
+import { __dirname, con, ejecutarConsulta } from "../utils.js";
 
 
 //import { agendaService } from "../services/agenda.services.js";
@@ -10,21 +10,31 @@ import { isUser } from "../middleware/Helper.js";
 
 export const pacienteHtmlRouter = express.Router();
 
-
-pacienteHtmlRouter.post('/imagen', upload.single('canvasImage'), (req, res) => {
-    let obj = req.body;
-    console.log("obj", obj);
-
-    const image = obj.image;
-    if (!image) {
-        return res.status(400).json({ status: "error", msg: "No se ha cargado ninguna imagen" });
-    }else{
-        
-        return res.status(200).json({ status: "ok", msg: "Imagen cargada correctamente" });
+pacienteHtmlRouter.post("/imagen", (req, res) => {
+    const { img, name } = req.body;
+    const fecha = new Date().toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires" }).replace(/:/g, "-").replace(/\./g, "-").replace(/\//g, "-").replace(/,/g, "");
+    const pngBuffer = Buffer.from(img, "base64");
+    // const image = obj.image;
+    const nombreArchivo = `Plantilla_${fecha}.png`;
+    const rutaCarpetaArchivos = path.join(__dirname, `storage/${name}`);
+    const rutaArchivo = path.join(rutaCarpetaArchivos, nombreArchivo);
+    // Verifica si la carpeta existe
+    if (!fs.existsSync(rutaCarpetaArchivos)) {
+        // Si la carpeta no existe, créala
+        fs.mkdirSync(rutaCarpetaArchivos, { recursive: true });
     }
-    
-    
-  });
+
+    // Guarda el archivo en el servidor
+    fs.writeFile(rutaArchivo, pngBuffer, (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ status: "error", msg: "Error al guardar el archivo" });
+        }
+
+        return res.status(200).json({ status: "success", msg: `Producto con el id: ${name} guardado en el servidor` });
+    });
+});
+
 
 
 pacienteHtmlRouter.get("/alta", isUser, async (req, res) => {
@@ -140,11 +150,29 @@ pacienteHtmlRouter.get("/modificar", async (req, res) => {
                   query = query + ` WHERE dni_paciente=${req.query.dni}`;
               }
            }
-           const results = await ejecutarConsulta(query);
+           const paciente = await ejecutarConsulta(query);
+            // crea una constante que tenga los archivos de la carpeta storage/req.query.dni y que sean .png
+            
+            const rutaCarpetaArchivos = path.join(__dirname, `storage/${req.query.dni}`);
+            //crea la carpeta si no existe
+            if (!fs.existsSync(rutaCarpetaArchivos)) {
+                fs.mkdirSync(rutaCarpetaArchivos);
+            }
+            //lee los archivos de la carpeta que sean.p[ng ] y guarda en files con clave = url y valor = nombre del archivo
+            const files = fs.readdirSync(rutaCarpetaArchivos).filter(file => path.extname(file) === '.png').map(file => {
+                return {
+                    url: rutaCarpetaArchivos+`/${file}`,
+                    nombre: file
+                }
+            });
+
+            
+            console.log("files",files);
+            console.log("rutaCarpetaArchivos",rutaCarpetaArchivos);
 
             //
            
-           return res.status(200).render("pacientealta", { paciente: results ,modificar:true});
+           return res.status(200).render("pacientealta", { paciente,modificar:true,files,rutaCarpetaArchivos});
        }  catch (error) {
            console.error(error);
            return res.status(404).json({msg:"fallo"});
