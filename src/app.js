@@ -8,7 +8,8 @@ import { loginHtmlRouter } from "./routers/loginHtmlRouter.js";
 import handlebars from "express-handlebars";
 import path from "path";
 import { con, __dirname,upload, user } from "./utils.js";
-import { Server } from "socket.io";
+import http from 'http';
+import { Server as SocketIO } from 'socket.io';
 
 
 
@@ -19,6 +20,9 @@ import { Server } from "socket.io";
 // import { producto } from "./../DAO/ProductManager.js";
 
 const app = express();
+const server = http.createServer(app);
+const io = new SocketIO(server);
+
 const port = 8081;
 const usuario=con.user;
 
@@ -48,7 +52,10 @@ app.use(session({
 //Rutas: API REST CON JSON
 // app.use("/api/products", productRouter);
 // app.use("/api/carts", cartRouter);
-
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 //Rutas: HTML RENDER SERVER SIDE
 app.use("/agenda", agendaHtmlRouter);
 app.use("/paciente", pacienteHtmlRouter);
@@ -57,6 +64,21 @@ app.use("/login", loginHtmlRouter);
 
 //Rutas: SOCKETS
 //app.use("/realtimeproducts", SocketRouter);
+// Inicialización del socket.io
+io.on('connection', (socket) => {
+  console.log('Cliente conectado');
+
+  // Escucha el evento 'nuevaFila' cuando se agrega una fila
+  socket.on('nuevaFila', (fila) => {
+    // Emitir el evento 'agregarFila' a todos los clientes conectados
+    io.emit('agregarFila', fila);
+  });
+
+  // Manejo de desconexiones de clientes
+  socket.on('disconnect', () => {
+    console.log('Cliente desconectado');
+  });
+});
 
 
 app.get("/*", async (req, res) => {

@@ -223,7 +223,8 @@ agendaHtmlRouter.post('/alta',async (req, res) => {
       color_agenda
   } = req.body;
     //valida si tiene valor id_agenda
-    
+    //io.emit('agregarFila', obj);
+
     //crea un select donde busque en la tabla agenda si el id_agenda existe
   
     if( id_agenda == 0 ){

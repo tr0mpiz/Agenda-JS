@@ -19,6 +19,8 @@ pacienteHtmlRouter.post("/imagen", (req, res) => {
     const rutaCarpetaArchivos = path.join(__dirname, `/public/storage/${name}`);
     const rutaArchivo = path.join(rutaCarpetaArchivos, nombreArchivo);
     // Verifica si la carpeta existe
+    console.log("rutaCarpetaArchivos");
+    console.log(rutaCarpetaArchivos);
     if (!fs.existsSync(rutaCarpetaArchivos)) {
         // Si la carpeta no existe, créala
         fs.mkdirSync(rutaCarpetaArchivos, { recursive: true });
