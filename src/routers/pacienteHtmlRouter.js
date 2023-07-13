@@ -16,7 +16,7 @@ pacienteHtmlRouter.post("/imagen", (req, res) => {
     const pngBuffer = Buffer.from(img, "base64");
     // const image = obj.image;
     const nombreArchivo = `Plantilla_${fecha}.png`;
-    const rutaCarpetaArchivos = path.join(__dirname, `storage/${name}`);
+    const rutaCarpetaArchivos = path.join(__dirname, `/public/storage/${name}`);
     const rutaArchivo = path.join(rutaCarpetaArchivos, nombreArchivo);
     // Verifica si la carpeta existe
     if (!fs.existsSync(rutaCarpetaArchivos)) {
@@ -153,15 +153,16 @@ pacienteHtmlRouter.get("/modificar", async (req, res) => {
            const paciente = await ejecutarConsulta(query);
             // crea una constante que tenga los archivos de la carpeta storage/req.query.dni y que sean .png
             
-            const rutaCarpetaArchivos = path.join(__dirname, `storage/${req.query.dni}`);
+            const rutaCarpetaArchivos = path.join(__dirname, `/public/storage/${req.query.dni}`);
             //crea la carpeta si no existe
+            console.log(__dirname)
             if (!fs.existsSync(rutaCarpetaArchivos)) {
                 fs.mkdirSync(rutaCarpetaArchivos);
             }
             //lee los archivos de la carpeta que sean.p[ng ] y guarda en files con clave = url y valor = nombre del archivo
             const files = fs.readdirSync(rutaCarpetaArchivos).filter(file => path.extname(file) === '.png').map(file => {
                 return {
-                    url: rutaCarpetaArchivos+`/${file}`,
+                    dni: req.query.dni,
                     nombre: file
                 }
             });
