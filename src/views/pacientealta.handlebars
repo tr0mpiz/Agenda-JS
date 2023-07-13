@@ -144,35 +144,32 @@
             </div>
           </form>
           {{!-- <form  > --}}
-             <div class="row mb-3">
+            <div class="row mb-3">
               <label class="col-sm-2 col-form-label" for="lienzo">Tipo de Calzado</label>
-                
-                  <div class="col-sm-2">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="tipoCalzado" id="zapatos" value="zapatos">
-                      <label class="form-check-label" for="zapatos">
-                        Zapatos
-                      </label>
-                    </div>
-                  </div>
-                  <div class="col-sm-2">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="tipoCalzado" id="zapatillas" value="zapatillas">
-                      <label class="form-check-label" for="zapatillas">
-                        Zapatillas
-                      </label>
-                    </div>
-                  </div>
-                  <div class="col-sm-2">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="tipoCalzado" id="botines" value="botines">
-                      <label class="form-check-label" for="botines">
-                        Botines
-                      </label>
-                    </div>
-                  </div>
-                
-
+              <div class="col-sm-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="tipoCalzado" id="zapatos" value="zapatos" onclick="seleccionarTipoCalzado('Zapatos')">
+                  <label class="form-check-label" for="zapatos">
+                    Zapatos
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="tipoCalzado" id="zapatillas" value="zapatillas" onclick="seleccionarTipoCalzado('Zapatillas')">
+                  <label class="form-check-label" for="zapatillas">
+                    Zapatillas
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-2">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="tipoCalzado" id="botines" value="botines" onclick="seleccionarTipoCalzado('Botines')">
+                  <label class="form-check-label" for="botines">
+                    Botines
+                  </label>
+                </div>
+              </div>
             </div>
             <div class="row mb-3">
               <label class="col-sm-2 col-form-label" for="lienzo">Lienzo</label>
@@ -249,6 +246,10 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
+const tipoCalzadoText = document.createElement('div');
+  tipoCalzadoText.classList.add('tipo-calzado-text');
+  document.body.appendChild(tipoCalzadoText);
+
 let isDrawing = false;
 let lastX = 0;
 let lastY = 0;
@@ -271,34 +272,46 @@ function updateColor() {
   currentColor = colorPicker.value;
 }
 
-// Dibuja los pies
-function drawFeet() {
-  
-// Dibuja el primer pie
-ctx.beginPath();
-ctx.ellipse(125, 200, 100, 150, 0, 0, 2 * Math.PI);
-ctx.stroke(); // Dibuja el óvalo del primer pie
+function drawFeet(tipoCalzado) {
+    // Borra todo el contenido del lienzo
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-// Dibuja el segundo pie
-ctx.beginPath();
-ctx.ellipse(375, 200, 100, 150, 0, 0, 2 * Math.PI);
-ctx.stroke(); // Dibuja el óvalo del segundo pie
+    // Dibuja el primer pie
+    ctx.beginPath();
+    ctx.ellipse(125, 200, 100, 150, 0, 0, 2 * Math.PI);
+    ctx.stroke(); // Dibuja el óvalo del primer pie
 
-// Dibuja la línea horizontal superior
-ctx.beginPath();
-ctx.moveTo(0, 130); // Punto inicial
-ctx.lineTo(canvas.width, 130); // Línea hasta el final del canvas
-ctx.stroke(); // Dibuja la línea horizontal superior
+    // Dibuja el segundo pie
+    ctx.beginPath();
+    ctx.ellipse(375, 200, 100, 150, 0, 0, 2 * Math.PI);
+    ctx.stroke(); // Dibuja el óvalo del segundo pie
 
-// Dibuja la línea horizontal inferior
-ctx.beginPath();
-ctx.moveTo(0, 270); // Punto inicial
-ctx.lineTo(canvas.width, 270); // Línea hasta el final del canvas
-ctx.stroke(); // Dibuja la línea horizontal inferior
-}
+    // Dibuja la línea horizontal superior
+    ctx.beginPath();
+    ctx.moveTo(0, 130); // Punto inicial
+    ctx.lineTo(canvas.width, 130); // Línea hasta el final del canvas
+    ctx.stroke(); // Dibuja la línea horizontal superior
 
-// Dibuja los pies al cargar la página
-drawFeet();
+    // Dibuja la línea horizontal inferior
+    ctx.beginPath();
+    ctx.moveTo(0, 270); // Punto inicial
+    ctx.lineTo(canvas.width, 270); // Línea hasta el final del canvas
+    ctx.stroke(); // Dibuja la línea horizontal inferior
+
+    // Dibuja el tipo de zapato seleccionado
+    ctx.font = '34px Verdana';
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#FF0000';
+    ctx.fillText(tipoCalzado, canvas.width - 10, canvas.height - 10);
+  }
+
+  // Vuelve a dibujar los pies y el tipo de zapato seleccionado
+  function seleccionarTipoCalzado(tipo) {
+    drawFeet(tipo);
+  }
+
+  // Dibuja los pies al cargar la página
+  drawFeet('Zapatilla');
 
 // Habilitar el dibujo cuando se toca el lienzo
 canvas.addEventListener('touchstart', startDrawing, { passive: false });
