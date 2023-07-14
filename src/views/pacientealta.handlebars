@@ -1,7 +1,76 @@
 {{! <style>
     .form-group{ flex-basis: 50% !important; box-sizing: border-box !important; }img{width: 5rem;height: 3rem;}td{vertical-align: middle; }
 </style> }}
-
+<div class="modal" id="backDropModal" data-bs-backdrop="static" tabindex="-1"  aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-xl">
+    <form class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="backDropModalTitle">Croquis</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+         <div class="row mb-3">
+              <label class="col-sm-2 col-form-label" for="lienzo">Tipo de Calzado</label>
+              <div class="col-sm-2 p-3">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="tipoCalzado" id="zapatos" value="zapatos" onclick="seleccionarTipoCalzado('Zapatos')">
+                  <label class="form-check-label" for="zapatos">
+                    Zapatos
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-2 p-3">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" checked type="radio" name="tipoCalzado" id="zapatillas" value="zapatillas" onclick="seleccionarTipoCalzado('Zapatillas')">
+                  <label class="form-check-label" for="zapatillas">
+                    Zapatillas
+                  </label>
+                </div>
+              </div>
+              <div class="col-sm-2 p-3">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="tipoCalzado" id="botines" value="botines" onclick="seleccionarTipoCalzado('Botines')">
+                  <label class="form-check-label" for="botines">
+                    Botines
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <label class="col-12 col-form-label" for="lienzo">Lienzo</label>
+              <div class="col-12 offset-2 col-sm-12">
+                      <canvas id="myCanvas"  class="input-group-text" style="cursor: se-resize" width="600" height="600"></canvas>
+                  
+              </div>
+            </div>
+           
+            <div class="row mb-3 p-4">
+              <label class="col-sm-2 col-form-label" for="lienzo">Opciones</label>
+              <div class="col-1 col-sm-2">
+                <div id="resetButton" class="form-control btn btn-danger" style="cursor: w-resize" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Limpiar">
+                  <i class="bi bi-bootstrap-reboot"></i>
+                </div>
+              </div>
+              <div class="col-1 col-sm-2">
+                  <div id="resetButton" class="form-control btn btn-secondary" style="cursor:w-resize" onclick="undo()"data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Atras"  ><i class="bi bi-arrow-left"></i></div>
+              </div>
+              <div class="col-1 col-sm-2">
+                <div><input  class="form-control" type="color" id="colorPicker" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Color del trazo"></div>
+              </div>
+              <div class="col-1 col-sm-2">
+                <input class="form-control" type="number" id="strokeWidth" min="1" max="10" step="1" value="1" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Grosor del trazo">
+              </div>
+              
+              
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button id="saveButton" onclick="guardarServer()" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Crear Croquis" >Crear</button>
+      </div>
+    </form>
+  </div>
+</div>
 {{#if paciente.0.id_paciente}}   
 {{#if modificar}}
 <h4 class="fw-bold py-3 mb-4">
@@ -127,80 +196,26 @@
             </div>
             
             <div class="row mb-3">
-              {{#if paciente.0.id_paciente}}
-                 {{#if modificar}}
-                 <input value="{{ paciente.0.id_paciente }}" type="text" class="form-control d-none"  id="id_paciente" name="id_paciente" >
-                  <div class="col-sm-10 offset-sm-2">
+              <div class="col-sm-10 offset-sm-2">
+                
+              
+                {{#if paciente.0.id_paciente}}
+                  {{#if modificar}}
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#backDropModal">
+                      Crear Plantilla
+                    </button>
+                    <input value="{{ paciente.0.id_paciente }}" type="text" class="form-control d-none"  id="id_paciente" name="id_paciente" >
                     <button type="" class="btn btn-warning">Modificar</button>
-                  </div>
+                  {{/if}}
+                {{else}}
+                <input value="0" type="text" class="form-control d-none"  id="id_paciente" name="id_paciente" placeholder="john.doe@example.com" aria-label="john.doe@example.com" aria-describedby="email_paciente2">
+                <button type="submit" class="btn btn-success">Guardar Paciente</button>
                 {{/if}}
-              {{else}}
-              <input value="0" type="text" class="form-control d-none"  id="id_paciente" name="id_paciente" placeholder="john.doe@example.com" aria-label="john.doe@example.com" aria-describedby="email_paciente2">
-                <div class="col-sm-10 offset-sm-2">
-                  <button type="submit" class="btn btn-success">Guardar Paciente</button>
-                </div>
-              {{/if}}
-             
+              </div>
             </div>
           </form>
           {{!-- <form  > --}}
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label" for="lienzo">Tipo de Calzado</label>
-              <div class="col-sm-2">
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="tipoCalzado" id="zapatos" value="zapatos" onclick="seleccionarTipoCalzado('Zapatos')">
-                  <label class="form-check-label" for="zapatos">
-                    Zapatos
-                  </label>
-                </div>
-              </div>
-              <div class="col-sm-2">
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" checked type="radio" name="tipoCalzado" id="zapatillas" value="zapatillas" onclick="seleccionarTipoCalzado('Zapatillas')">
-                  <label class="form-check-label" for="zapatillas">
-                    Zapatillas
-                  </label>
-                </div>
-              </div>
-              <div class="col-sm-2">
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="tipoCalzado" id="botines" value="botines" onclick="seleccionarTipoCalzado('Botines')">
-                  <label class="form-check-label" for="botines">
-                    Botines
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <label class="col-sm-2 col-form-label" for="lienzo">Lienzo</label>
-              <div class="col-sm-10">
-                <div class="input-group input-group-merge">
-                  <span id="lienzo2" class="input-group-text"><i class="bi bi-brush-fill"></i></span>
-                  <canvas id="myCanvas"  class="input-group-text" style="cursor: se-resize" width="600" height="600"></canvas>
-                </div>
-              </div>
-            </div>
-            <div class="row mb-3 p-4">
-              <label class="col-sm-2 col-form-label" for="lienzo">Opciones</label>
-              <div class="col-1 col-sm-2">
-                <div id="resetButton" class="form-control btn btn-danger" style="cursor: w-resize" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Limpiar">
-                  <i class="bi bi-bootstrap-reboot"></i>
-                </div>
-              </div>
-              <div class="col-1 col-sm-2">
-                  <div id="resetButton" class="form-control btn btn-secondary" style="cursor:w-resize" onclick="undo()"data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Atras"  ><i class="bi bi-arrow-left"></i></div>
-              </div>
-              <div class="col-1 col-sm-2">
-                <div><input  class="form-control" type="color" id="colorPicker" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Color del trazo"></div>
-              </div>
-              <div class="col-1 col-sm-2">
-                <input class="form-control" type="number" id="strokeWidth" min="1" max="10" step="1" value="1" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Grosor del trazo">
-              </div>
-              <div class="col-2 col-sm-2">
-                <button id="saveButton" onclick="guardarServer()" class="form-control btn btn-primary" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Crear Croquis" >Crear</button>
-              </div>
-              
-            </div>
+           
             <div class="row">
                <label class="col-sm-2 col-form-label" for="lienzo">Plantillas creadas</label>
               
