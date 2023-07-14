@@ -156,7 +156,7 @@
               </div>
               <div class="col-sm-2">
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="tipoCalzado" id="zapatillas" value="zapatillas" onclick="seleccionarTipoCalzado('Zapatillas')">
+                  <input class="form-check-input" checked type="radio" name="tipoCalzado" id="zapatillas" value="zapatillas" onclick="seleccionarTipoCalzado('Zapatillas')">
                   <label class="form-check-label" for="zapatillas">
                     Zapatillas
                   </label>
@@ -176,24 +176,30 @@
               <div class="col-sm-10">
                 <div class="input-group input-group-merge">
                   <span id="lienzo2" class="input-group-text"><i class="bi bi-brush-fill"></i></span>
-                  <canvas id="myCanvas"  class="input-group-text" style="cursor: se-resize" width="500" height="500"></canvas>
+                  <canvas id="myCanvas"  class="input-group-text" style="cursor: se-resize" width="600" height="600"></canvas>
                 </div>
               </div>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3 p-4">
               <label class="col-sm-2 col-form-label" for="lienzo">Opciones</label>
-              <div class="col-2">
-                  <div id="resetButton" class="form-control btn btn-secondary" style="cursor:w-resize"><i class="bi bi-bootstrap-reboot"></i></div>
+              <div class="col-1">
+                <div id="resetButton" class="form-control btn btn-danger" style="cursor: w-resize" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Limpiar">
+                  <i class="bi bi-bootstrap-reboot"></i>
+                </div>
+              </div>
+              <div class="col-1">
+                  <div id="resetButton" class="form-control btn btn-secondary" style="cursor:w-resize" onclick="undo()"data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Atras"  ><i class="bi bi-arrow-left"></i></div>
+              </div>
+              <div class="col-1">
+                <div><input  class="form-control" type="color" id="colorPicker" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Color del trazo"></div>
+              </div>
+              <div class="col-1">
+                <input class="form-control" type="number" id="strokeWidth" min="1" max="10" step="1" value="1" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Grosor del trazo">
               </div>
               <div class="col-2">
-                <div><input  class="form-control" type="color" id="colorPicker"></div>
+                <button id="saveButton" onclick="guardarServer()" class="form-control btn btn-primary" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Crear Croquis" >Crear</button>
               </div>
-              <div class="col-2">
-                <input class="form-control" type="number" id="strokeWidth" min="1" max="10" step="1" value="1">
-              </div>
-              <div class="col-2">
-                <button id="saveButton" onclick="guardarServer()" class="form-control btn btn-primary">Crear</button>
-              </div>
+              
             </div>
             <div class="row">
                <label class="col-sm-2 col-form-label" for="lienzo">Plantillas creadas</label>
@@ -255,6 +261,7 @@ let lastX = 0;
 let lastY = 0;
 let currentColor = 'black'; // Color inicial
 let currentLineWdth = 1; // Grosor inicial
+let undoStack = [];
 
 const strokeWidth = document.getElementById('strokeWidth');
 strokeWidth.addEventListener('keyup', updateStroke);
@@ -273,37 +280,45 @@ function updateColor() {
 }
 
 function drawFeet(tipoCalzado) {
-    // Borra todo el contenido del lienzo
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Borra todo el contenido del lienzo
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Dibuja el primer pie
-    ctx.beginPath();
-    ctx.ellipse(125, 200, 100, 150, 0, 0, 2 * Math.PI);
-    ctx.stroke(); // Dibuja el óvalo del primer pie
+  // Calcula la posición vertical para dibujar los pies
+  var centerY = canvas.height / 2 - 30;
 
-    // Dibuja el segundo pie
-    ctx.beginPath();
-    ctx.ellipse(375, 200, 100, 150, 0, 0, 2 * Math.PI);
-    ctx.stroke(); // Dibuja el óvalo del segundo pie
+  // Calcula la posición horizontal para dibujar los pies
+  var centerX1 = canvas.width / 2 - 125;
+  var centerX2 = canvas.width / 2 + 125;
 
-    // Dibuja la línea horizontal superior
-    ctx.beginPath();
-    ctx.moveTo(0, 130); // Punto inicial
-    ctx.lineTo(canvas.width, 130); // Línea hasta el final del canvas
-    ctx.stroke(); // Dibuja la línea horizontal superior
+  // Dibuja el primer pie
+  ctx.beginPath();
+  ctx.ellipse(centerX1, centerY, 100, 150, 0, 0, 2 * Math.PI);
+  ctx.stroke(); // Dibuja el óvalo del primer pie
 
-    // Dibuja la línea horizontal inferior
-    ctx.beginPath();
-    ctx.moveTo(0, 270); // Punto inicial
-    ctx.lineTo(canvas.width, 270); // Línea hasta el final del canvas
-    ctx.stroke(); // Dibuja la línea horizontal inferior
+  // Dibuja el segundo pie
+  ctx.beginPath();
+  ctx.ellipse(centerX2, centerY, 100, 150, 0, 0, 2 * Math.PI);
+  ctx.stroke(); // Dibuja el óvalo del segundo pie
 
-    // Dibuja el tipo de zapato seleccionado
-    ctx.font = '34px Verdana';
-    ctx.textAlign = 'right';
-    ctx.fillStyle = '#FF0000';
-    ctx.fillText(tipoCalzado, canvas.width - 10, canvas.height - 10);
-  }
+  // Dibuja la línea horizontal superior
+  ctx.beginPath();
+  ctx.moveTo(0, centerY - 70); // Punto inicial
+  ctx.lineTo(canvas.width, centerY - 70); // Línea hasta el final del canvas
+  ctx.stroke(); // Dibuja la línea horizontal superior
+
+  // Dibuja la línea horizontal inferior
+  ctx.beginPath();
+  ctx.moveTo(0, centerY + 70); // Punto inicial
+  ctx.lineTo(canvas.width, centerY + 70); // Línea hasta el final del canvas
+  ctx.stroke(); // Dibuja la línea horizontal inferior
+
+  // Dibuja el tipo de zapato seleccionado
+  ctx.font = '34px Roboto';
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#FF0000';
+  ctx.fillText(tipoCalzado, canvas.width - 10, canvas.height - 10);
+}
+
 
   // Vuelve a dibujar los pies y el tipo de zapato seleccionado
   function seleccionarTipoCalzado(tipo) {
@@ -311,7 +326,7 @@ function drawFeet(tipoCalzado) {
   }
 
   // Dibuja los pies al cargar la página
-  drawFeet('Zapatilla');
+  drawFeet('Zapatillas');
 
 // Habilitar el dibujo cuando se toca el lienzo
 canvas.addEventListener('touchstart', startDrawing, { passive: false });
@@ -325,6 +340,8 @@ function startDrawing(e) {
   const rect = canvas.getBoundingClientRect();
   [lastX, lastY] = [touch.clientX - rect.left, touch.clientY - rect.top];
   e.preventDefault(); // Evita el desplazamiento de la página durante el dibujo
+  // Guardar los pasos anteriores en un array
+  saveState();
 }
 
 
@@ -351,6 +368,7 @@ function draw(e) {
 }
 
 function stopDrawing() {
+  saveState();
   isDrawing = false;
 }
 
@@ -418,8 +436,39 @@ function resetCanvas() {
   // Borra todo el contenido del lienzo
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.strokeStyle = 'black';
-  // Vuelve a dibujar solo los pies
-  drawFeet();
+  ctx.lineWidth = 1;
+  drawFeet('Zapatillas');
+  
+  //establecé el tipo de calzado en el radio button
+  let radioButton = document.getElementsByName('tipoCalzado');
+  //si el text es igual a Zapatillas
+  if (radioButton[0].value == 'Zapatillas') {
+    //selecciona el radio button de zapatillas
+    radioButton[0].checked = true;
+  } else {
+    //selecciona el radio button de zapatos
+    radioButton[1].checked = true;
+  }
+
+
 }
+
+
+
+
+// Función para guardar el estado actual
+function saveState() {
+      let state = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      undoStack.push(state);
+    }
+
+// Función para deshacer
+function undo() {
+      if (undoStack.length > 1) {
+        undoStack.pop();
+        let previousState = undoStack[undoStack.length - 1];
+        ctx.putImageData(previousState, 0, 0);
+      }
+    }
 </script>
 {{! <script></script> }}
