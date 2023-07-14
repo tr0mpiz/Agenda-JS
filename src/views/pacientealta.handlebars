@@ -182,21 +182,21 @@
             </div>
             <div class="row mb-3 p-4">
               <label class="col-sm-2 col-form-label" for="lienzo">Opciones</label>
-              <div class="col-1">
+              <div class="col-1 col-sm-2">
                 <div id="resetButton" class="form-control btn btn-danger" style="cursor: w-resize" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Limpiar">
                   <i class="bi bi-bootstrap-reboot"></i>
                 </div>
               </div>
-              <div class="col-1">
+              <div class="col-1 col-sm-2">
                   <div id="resetButton" class="form-control btn btn-secondary" style="cursor:w-resize" onclick="undo()"data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Atras"  ><i class="bi bi-arrow-left"></i></div>
               </div>
-              <div class="col-1">
+              <div class="col-1 col-sm-2">
                 <div><input  class="form-control" type="color" id="colorPicker" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Color del trazo"></div>
               </div>
-              <div class="col-1">
+              <div class="col-1 col-sm-2">
                 <input class="form-control" type="number" id="strokeWidth" min="1" max="10" step="1" value="1" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Grosor del trazo">
               </div>
-              <div class="col-2">
+              <div class="col-2 col-sm-2">
                 <button id="saveButton" onclick="guardarServer()" class="form-control btn btn-primary" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Crear Croquis" >Crear</button>
               </div>
               
