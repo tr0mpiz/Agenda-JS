@@ -24,13 +24,14 @@ function setActiveClass() {
 setActiveClass();
 
 
-function showBootstrapToast(title, message, duration) {
+function showBootstrapToast(title, message, duration, type) {
   
-  var toast = document.getElementById("toast");
-  var toastTitle = toast.querySelector(".me-auto");
-  var toastBody = toast.querySelector(".toast-body");
+  let toast = document.getElementById("toast");
+  let toastTitle = toast.querySelector(".me-auto");
+  let toastBody = toast.querySelector(".toast-body");
   
   toast.classList.add("show");
+  toast.classList.add(type);
   toastTitle.textContent = title;
   toastBody.textContent = message;
 

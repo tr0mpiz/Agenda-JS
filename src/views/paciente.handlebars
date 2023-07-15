@@ -1,39 +1,60 @@
+<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"> PACIENTES/</span> CONSULTA </h4>
+<div class="row">
+    <!-- Earnings (Monthly) Card Example -->
+ 
+
+  <h1 class="h3 mb-2 text-gray-800">PACIENTE</h1>
+  <p class="mb-4">En esta seccion estan todos los pacientes.</p>
+
+    <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Pacientes</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                          <th>DNI</th>
+                          <th>Nombre</th>
+                          <th>Apellido</th>
+                          <th>Talle</th>
+                          <th>Contacto</th>
+                          <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                       <tr>
+                        <th>DNI</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Talle</th>
+                        <th>Contacto</th>
+                        <th>Email</th>
+                      </tr>
+                    </tfoot>
+                    
+                    <tbody id="table-product-body">
+                      {{#each pacientes}}
+                          <tr id="paciente-{{this.id_paciente}}">
+                            <td><a href="/paciente/modificar?dni={{this.dni_paciente}}">{{this.dni_paciente}}</a></td>
+                              <td><i class=""></i> <strong>{{this.nombre_paciente}}</strong></td>
+                              <td><i class=""></i> <strong>{{this.apellido_paciente}}</strong></td>
+                              <td>{{this.talle_paciente}}</td>
+                              <td><a target="_blank"  href="https://wa.me/{{this.contacto_paciente}}">{{this.contacto_paciente}}<a/></td>
+                              <td><span class="badge bg-label-primary me-1">{{this.email_paciente}}</span></td>
+                          </tr>
+                      {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {{! <style>
     .form-group{ flex-basis: 50% !important; box-sizing: border-box !important; }img{width: 5rem;height: 3rem;}td{vertical-align: middle; }
 </style> }}
-<h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light"> PACIENTES/</span> CONSULTA </h4>
-<div class="container">
-  <div class="card">
-  <h5 class="card-header">PACIENTES</h5>
-    <div class="table-responsive text-nowrap">
-      <table class="table" id="dataTable">
-        <thead>
-          <tr>
-            <th>DNI</th>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Talle</th>
-            <th>Contacto</th>
-            <th>Email</th>
-          </tr>
-        </thead>
-        <tbody class="table-border-bottom-0">
 
-          {{#each pacientes}}
-                <tr id="paciente-{{this.id_paciente}}">
-                  <td><a href="/paciente/modificar?dni={{this.dni_paciente}}">{{this.dni_paciente}}</a></td>
-                    <td><i class=""></i> <strong>{{this.nombre_paciente}}</strong></td>
-                    <td><i class=""></i> <strong>{{this.apellido_paciente}}</strong></td>
-                    <td>{{this.talle_paciente}}</td>
-                    <td><a target="_blank"  href="https://wa.me/{{this.contacto_paciente}}">{{this.contacto_paciente}}<a/></td>
-                    <td><span class="badge bg-label-primary me-1">{{this.email_paciente}}</span></td>
-                </tr>
-            {{/each}}
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>

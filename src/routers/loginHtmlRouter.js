@@ -27,6 +27,16 @@ loginHtmlRouter.get("/alta", async (req, res) => {
         return res.status(200).render("usuarioalta");
 });
 
+loginHtmlRouter.get("/logout", async (req, res) => {
+    req.session.usuario = null;
+    req.session.id_usuario = null;
+    req.session.nombre = null;
+    req.session.apellido = null;
+    req.session.permisos = null;
+    req.session.destroy();
+    return res.redirect("/login");
+
+});
 
 
 
@@ -71,15 +81,19 @@ loginHtmlRouter.post('/',async (req, res) => {
                         req.session.id_usuario = insertAgenda[0].id;
                         req.session.nombre = insertAgenda[0].nombre;
                         req.session.apellido = insertAgenda[0].apellido;
-                        req.session.cookie.expires = new Date(Date.now() + 1000000);
+                        //no tiene expiracion la sesion
+                        req.session.cookie.expires = new Date(Date.now() + (1000 * 60 * 60 * 24 * 365 * 10));
+                        req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 365 * 10;
+                        
                         //crea un archivo .log con la informacion de la sesion si no existe la carpeta la crea
                         if (!fs.existsSync(__dirname + "/public/logs/")) {
                             fs.mkdirSync(__dirname + "/public/logs/");
                         }
                         fs.appendFileSync(__dirname + "/public/logs/" + req.session.id_usuario + ".log", "Sesion iniciada con exito en el horario por el usuario : " + req.session.cookie.expires + " " + req.session.usuario + "\n");
                         
-                       
-                        return res.status(200).render("pacientealta", { usuario: insertAgenda});
+                       //re
+                        return res.status(200).redirect('/agenda');
+                        // return res.redirect('/agenda?usuario=' + encodeURIComponent(JSON.stringify(insertAgenda)) + '&isUser=true');
 
                     }
                     

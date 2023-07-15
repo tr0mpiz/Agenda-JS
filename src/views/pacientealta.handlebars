@@ -1,17 +1,60 @@
 {{! <style>
     .form-group{ flex-basis: 50% !important; box-sizing: border-box !important; }img{width: 5rem;height: 3rem;}td{vertical-align: middle; }
 </style> }}
-<div class="modal" id="backDropModal" data-bs-backdrop="static" tabindex="-1"  aria-modal="true" role="dialog">
-  <div class="modal-dialog modal-xl">
+<div class="modal fade" id="citas" tabindex="-1" aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-lg modal-simple modal-enable-otp modal-dialog-centered">
+    <div class="modal-content p-2 p-md-5">
+      <div class="modal-body">
+        <div class="text-center">
+          <h3 class="mb-2">Citas</h3>
+          <p>Citas concretadas</p>
+        </div>
+      </div>
+      <h4 class="mb-4 pb-2">Nos visito <span >{{ pactadas.[0].pactadas}}</span> vez</h4>
+      <ul class="p-0 m-0">
+        {{#each citas}}
+          <li class="d-flex mb-3">
+            <div class="avatar me-3">
+              <i class="bi bi-calendar-check"></i>
+            </div>
+            <div class="d-flex justify-content-between flex-grow-1">
+              <div class="me-2">
+                <p class="mb-0">{{ this.nombre_paciente }} {{ this.apellido_paciente }} </p>
+                <p class="mb-0 text-muted">{{ this.comentario_cita }}</p>
+              </div>
+              <div class="text-end">
+                <p class="mb-0">{{ this.fecha }}</p>
+                <p class="mb-0 text-muted">{{ this.hora }}</p>
+              </div>
+            </div>
+          </li>
+        {{/each}}
+        
+      </ul>
+      <div class="d-flex align-items-center mt-4">
+        <i class="bx bx-user me-2"></i>
+        <div class="d-flex justify-content-between flex-grow-1 align-items-center">
+          <h6 class="mb-0">Proxima Cita Sugerida {{ proximacita.[0].proxima_cita}}, descartar si tiene para este año</h6>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+       
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="backDropModal" data-bs-backdrop="static" tabindex="-1"  aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-lg modal-simple modal-enable-otp modal-dialog-centered">
     <form class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="backDropModalTitle">Croquis</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-         <div class="row mb-3">
-              <label class="col-sm-2 col-form-label" for="lienzo">Tipo de Calzado</label>
-              <div class="col-sm-2 p-3">
+        <div class="text-center">
+          <h3 class="mb-2">Crear Plantilla</h3>
+          <p>Selecciona el tipo de calzado</p>
+        </div>
+         <div class="row mt-3">
+              <div class="col-2 p-3 offset-3">
                 <div class="form-check form-check-inline">
                   <input class="form-check-input" type="radio" name="tipoCalzado" id="zapatos" value="zapatos" onclick="seleccionarTipoCalzado('Zapatos')">
                   <label class="form-check-label" for="zapatos">
@@ -19,7 +62,7 @@
                   </label>
                 </div>
               </div>
-              <div class="col-sm-2 p-3">
+              <div class="col-2 p-3">
                 <div class="form-check form-check-inline">
                   <input class="form-check-input" checked type="radio" name="tipoCalzado" id="zapatillas" value="zapatillas" onclick="seleccionarTipoCalzado('Zapatillas')">
                   <label class="form-check-label" for="zapatillas">
@@ -27,7 +70,7 @@
                   </label>
                 </div>
               </div>
-              <div class="col-sm-2 p-3">
+              <div class="col-2 p-3">
                 <div class="form-check form-check-inline">
                   <input class="form-check-input" type="radio" name="tipoCalzado" id="botines" value="botines" onclick="seleccionarTipoCalzado('Botines')">
                   <label class="form-check-label" for="botines">
@@ -36,37 +79,87 @@
                 </div>
               </div>
             </div>
-            <div class="row mb-3">
-              <label class="col-12 col-form-label" for="lienzo">Lienzo</label>
-              <div class="col-12 offset-2 col-sm-12">
-                      <canvas id="myCanvas"  class="input-group-text" style="cursor: se-resize" width="600" height="600"></canvas>
-                  
-              </div>
-            </div>
-           
-            <div class="row mb-3 p-4">
-              <label class="col-sm-2 col-form-label" for="lienzo">Opciones</label>
+            <div class="row mb-3 p-1">
+              <label class="col-sm-2 col-form-label" for="lienzo"></label>
               <div class="col-1 col-sm-2">
-                <div id="resetButton" class="form-control btn btn-danger" style="cursor: w-resize" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Limpiar">
+                <div id="resetButton" class="form-control btn btn-danger" style="cursor: w-resize" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" data-bs-trigger="hover" title="Limpiar">
                   <i class="bi bi-bootstrap-reboot"></i>
                 </div>
               </div>
               <div class="col-1 col-sm-2">
-                  <div id="resetButton" class="form-control btn btn-secondary" style="cursor:w-resize" onclick="undo()"data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Atras"  ><i class="bi bi-arrow-left"></i></div>
+                  <div id="resetButton" class="form-control btn btn-secondary" style="cursor:w-resize" onclick="undo()"data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-tooltip="tooltip" title="Atras"  ><i class="bi bi-arrow-left"></i></div>
               </div>
               <div class="col-1 col-sm-2">
-                <div><input  class="form-control" type="color" id="colorPicker" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Color del trazo"></div>
+                <div><input  class="form-control" type="color" id="colorPicker" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" data-bs-trigger="hover" title="Color del trazo"></div>
               </div>
               <div class="col-1 col-sm-2">
-                <input class="form-control" type="number" id="strokeWidth" min="1" max="10" step="1" value="1" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Grosor del trazo">
+                <input class="form-control" type="number" id="strokeWidth" min="1" max="10" step="1" value="1" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-tooltip="tooltip" title="Grosor del trazo">
               </div>
               
               
             </div>
+            <div class="row mb-3">
+              
+              <div class="col-12 offset-1 col-sm-12">
+                      <canvas id="myCanvas"  class="input-group-text" style="cursor: se-resize" width="600" height="430"></canvas>
+              </div>
+            </div>
+           
+            
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button id="saveButton" onclick="guardarServer()" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" title="Crear Croquis" >Crear</button>
+        <div id="saveButton" onclick="guardarServer()" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" data-bs-trigger="hover" title="Crear Croquis" >Crear</div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="plantillascreadas" data-bs-backdrop="static" tabindex="-1"  aria-modal="true" role="dialog">
+  <div class="modal-dialog modal-lg modal-simple modal-enable-otp modal-dialog-centered">
+    <form class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center">
+          <h3 class="mb-2">Plantillas creadas</h3>
+          <p>Con las flechas direccionales se puede navegar en las imagenes.</p>
+        </div>
+          <div class="row">
+          <div id="carouselExample-cf" class=" offset-1 col-10 carousel carousel-dark slide carousel-fade" data-bs-ride="carousel">
+            <ol class="carousel-indicators">
+              {{#each files}}
+                  <li data-bs-target="#carouselExample-cf" data-bs-slide-to="{{@index}}" class="{{#if @first }}active {{/if}}"  {{#if @first }}aria-current="true" {{/if}}></li>
+              {{/each}}
+            
+            </ol>
+            <div class="carousel-inner">
+              {{#each files}}
+                <div class="carousel-item {{#if @first }}active {{/if}}">
+                  <img class="d-block w-100" src="/storage/{{this.dni}}/{{this.nombre}}" >
+                  <div class="carousel-caption d-none d-md-block">
+                    <h3>{{this.dni}}</h3>
+                    <p>{{this.nombre}}</p>
+                  </div>
+                </div>
+              {{/each}}
+              
+            </div>
+            <a class="carousel-control-prev" href="#carouselExample-cf" role="button" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExample-cf" role="button" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+       
       </div>
     </form>
   </div>
@@ -201,11 +294,11 @@
               
                 {{#if paciente.0.id_paciente}}
                   {{#if modificar}}
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#backDropModal">
-                      Crear Plantilla
-                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#backDropModal" > Crear Plantilla</button>
+                    <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#plantillascreadas"> Plantillas creadas </button>
+                    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#citas" > Citas </button>
                     <input value="{{ paciente.0.id_paciente }}" type="text" class="form-control d-none"  id="id_paciente" name="id_paciente" >
-                    <button type="" class="btn btn-warning">Modificar</button>
+                    <button type="" class="btn btn-success" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" data-bs-trigger="hover" title="Modificar paciente">Modificar</button>
                   {{/if}}
                 {{else}}
                 <input value="0" type="text" class="form-control d-none"  id="id_paciente" name="id_paciente" placeholder="john.doe@example.com" aria-label="john.doe@example.com" aria-describedby="email_paciente2">
@@ -216,39 +309,7 @@
           </form>
           {{!-- <form  > --}}
            
-            <div class="row">
-               <label class="col-sm-2 col-form-label" for="lienzo">Plantillas creadas</label>
-              
-
-              <div id="carouselExample-cf" class="col-7 carousel carousel-dark slide carousel-fade" data-bs-ride="carousel">
-                <ol class="carousel-indicators">
-                  {{#each files}}
-                      <li data-bs-target="#carouselExample-cf" data-bs-slide-to="{{@index}}" class="{{#if @first }}active {{/if}}"  {{#if @first }}aria-current="true" {{/if}}></li>
-                  {{/each}}
-                
-                </ol>
-                <div class="carousel-inner">
-                  {{#each files}}
-                    <div class="carousel-item {{#if @first }}active {{/if}}">
-                      <img class="d-block w-100" src="/storage/{{this.dni}}/{{this.nombre}}" >
-                      <div class="carousel-caption d-none d-md-block">
-                        <h3>{{this.dni}}</h3>
-                        <p>{{this.nombre}}</p>
-                      </div>
-                    </div>
-                  {{/each}}
-                  
-                </div>
-                <a class="carousel-control-prev" href="#carouselExample-cf" role="button" data-bs-slide="prev">
-                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#carouselExample-cf" role="button" data-bs-slide="next">
-                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                  <span class="visually-hidden">Next</span>
-                </a>
-              </div>
-            </div>
+            
             
           {{!-- </form> --}}
         </div>
@@ -299,7 +360,7 @@ function drawFeet(tipoCalzado) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // Calcula la posición vertical para dibujar los pies
-  var centerY = canvas.height / 2 - 30;
+  var centerY = canvas.height / 2 - 30 + 20 ;
 
   // Calcula la posición horizontal para dibujar los pies
   var centerX1 = canvas.width / 2 - 125;
@@ -405,6 +466,18 @@ const guardarServer = () =>{
     success: function(response) {
       // Aquí puedes trabajar con la respuesta obtenida
       console.log(response);
+      //mostra un toast que diga que el croquis se guardo correctamente y recarga la pagina despues de 3 segundos
+      let title = "Hecho";
+      let message = 'El croquis fue guardado';
+      let duration = 3000; // 5 segundos
+      let type = 'bg-success';
+      
+      showBootstrapToast(title, message, duration,type);
+      //cerra el modal backDropModal 
+      $('#backDropModal').modal('hide');
+      setTimeout(function(){ location.reload(); }, 3000);
+      
+      
     },
     error: function(error) {
       // Aquí puedes manejar los errores en caso de que ocurran

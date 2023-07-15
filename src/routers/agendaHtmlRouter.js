@@ -1,5 +1,6 @@
 import express from "express";
 import { con, upload } from "../utils.js";
+import { isUser } from "../middleware/Helper.js";
 import fs from "fs";
 import { __dirname, __filename,ejecutarConsulta } from "../utils.js";
 import e from "express";
@@ -9,7 +10,7 @@ import e from "express";
 
 export const agendaHtmlRouter = express.Router();
 
-agendaHtmlRouter.get("/recordatorios", async (req, res) => {
+agendaHtmlRouter.get("/recordatorios",isUser, async (req, res) => {
     try {
         const fechaCita = new Date();
         fechaCita.setDate(fechaCita.getDate() + 1);
@@ -26,7 +27,7 @@ agendaHtmlRouter.get("/recordatorios", async (req, res) => {
 
 
 
-agendaHtmlRouter.get("/calendario", async (req, res) => {
+agendaHtmlRouter.get("/calendario", isUser, async (req, res) => {
     let json=req.query.json;
     //console.log(json);
     if(json==1){
@@ -49,7 +50,7 @@ agendaHtmlRouter.get("/calendario", async (req, res) => {
             fecha = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear() + " " + fecha.getHours() + ":" + fecha.getMinutes() ;
     
     
-            return res.status(200).render("calendario", { pacientes: results ,fecha:fecha,maniana:maniana,pactadas:pactadas,hoy:hoy});
+            return res.status(200).render("calendario", { pacientes: results ,fecha:fecha,maniana:maniana,pactadas:pactadas,hoy:hoy,isUser:req.session.usuario});
         }  catch (error) {
             console.error(error);
             return res.status(404).json({msg:"fallo"});
@@ -60,7 +61,7 @@ agendaHtmlRouter.get("/calendario", async (req, res) => {
    
 });
 
-agendaHtmlRouter.get("/", async (req, res) => {
+agendaHtmlRouter.get("/", isUser,async (req, res) => {
     let id=req.query.id;
     if(id){
         try {
@@ -83,8 +84,8 @@ agendaHtmlRouter.get("/", async (req, res) => {
             // formate la fecha en dd/mm/yyyy hh:mm:ss
             fecha = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear() + " " + fecha.getHours() + ":" + fecha.getMinutes() ;
     
-    
-            return res.status(200).render("agenda", { agenda: results ,fecha:fecha,maniana:maniana,pactadas:pactadas,hoy:hoy});
+            
+            return res.status(200).render("agenda", { agenda: results ,fecha:fecha,maniana:maniana,pactadas:pactadas,hoy:hoy,isUser:req.session.usuario});
         }  catch (error) {
             console.error(error);
             return res.status(404).json({msg:"fallo",error:error});
@@ -96,7 +97,7 @@ agendaHtmlRouter.get("/", async (req, res) => {
 });
 
 
-agendaHtmlRouter.get("/modificar", async (req, res) => {
+agendaHtmlRouter.get("/modificar", isUser,async (req, res) => {
     let id=req.query.id;
     console.log(id);
     let agendaydatosdepaciente = await ejecutarConsulta(`SELECT a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%Y-%m-%dT%H:%i:%s') AS fecha_formateada, DATE_FORMAT(fecha_cita,'%Y-%m-%dT%H:%i:%s') AS fecha_cita_formateada, DATE_FORMAT(proxima_cita,'%Y-%m-%dT%H:%i:%s') AS proxima_cita_formateada FROM agenda a, paciente b WHERE a.id_paciente=b.id_paciente AND a.id_agenda=${id}`);
@@ -130,7 +131,7 @@ agendaHtmlRouter.delete("/eliminar", async (req, res) => {
          }
        
    });
-   agendaHtmlRouter.get("/ensala", async (req, res) => {
+   agendaHtmlRouter.get("/ensala", isUser,async (req, res) => {
     let id=req.query.id;
        try {
             let fecha = new Date();
@@ -148,7 +149,7 @@ agendaHtmlRouter.delete("/eliminar", async (req, res) => {
        
    });
 
-   agendaHtmlRouter.get("/entaller", async (req, res) => {
+   agendaHtmlRouter.get("/entaller",isUser, async (req, res) => {
     let id=req.query.id;
        try {
             let fecha = new Date();
@@ -166,7 +167,7 @@ agendaHtmlRouter.delete("/eliminar", async (req, res) => {
        
    });
 
-agendaHtmlRouter.get("/alta", async (req, res) => {
+agendaHtmlRouter.get("/alta",isUser, async (req, res) => {
     let id=req.query.id;
     if(id){
         let id=req.query.id;

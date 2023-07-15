@@ -1,3 +1,5 @@
+ {{#if isUser}}
+  
 <!DOCTYPE html>
 <html lang="en">
 
@@ -54,7 +56,7 @@
 
 <body>
   {{!-- TOAST --}}
-  <div id="toast" class="bs-toast toast toast-placement-ex m-2 fade bg-primary top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+  <div id="toast" class="bs-toast toast toast-placement-ex m-2 fade  top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
     <div class="toast-header">
       <i class="bx bx-bell me-2"></i>
       <div class="me-auto fw-semibold">Bootstrap</div>
@@ -199,11 +201,11 @@
                 <div data-i18n="Authentications">Pacientes</div>
               </a>
               <ul class="menu-sub">
-                <li class="menu-item">
+                {{!-- <li class="menu-item">
                   <a href="/paciente/alta" class="menu-link" >
                     <div data-i18n="Basic">Alta</div>
                   </a>
-                </li>
+                </li> --}}
                 <li class="menu-item">
                   <a href="/paciente" class="menu-link" >
                     <div data-i18n="Basic">Consulta</div>
@@ -216,7 +218,7 @@
                 </li>
               </ul>
             </li>
-            <li class="menu-item">
+            {{!-- <li class="menu-item">
               <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
                 <div data-i18n="Authentications">Login</div>
@@ -228,7 +230,7 @@
                   </a>
                 </li>
               </ul>
-            </li>
+            </li> --}}
           </ul>
         </aside>
         <!-- / Menu -->
@@ -263,51 +265,71 @@
                 
 
                 <!-- User -->
-                <li class="nav-item navbar-dropdown dropdown-user dropdown ">
-                  
-                  
-                  <a id="cantidad_recordatorios" class="nav-link dropdown-toggle hide-arrow rounded-pill btn  btn-warning  text-white" href="javascript:void(0);" data-bs-toggle="dropdown">
-                    <span class="tf-icons bx bx-pie-chart-alt" ></span> &nbsp; <span class="align-middle" id="cantidadrecordatorios">0</span>&nbsp;  Recordatorios
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end recordatorios" id="recordatorios">
+                <li class="nav-item dropdown-notifications navbar-dropdown dropdown me-3 me-xl-1">
+                    <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                      <i class="bx bx-bell bx-sm"></i>
+                      <span class="badge bg-danger rounded-pill badge-notifications" id="cantidadrecordatorios">0</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end py-0">
+                      <li class="dropdown-menu-header border-bottom">
+                        <div class="dropdown-header d-flex align-items-center py-3">
+                          <h5 class="text-body mb-0 me-auto">Recordatorios</h5>
+                          <a href="javascript:void(0)" class="dropdown-notifications-all text-body" ><i class="bx fs-4 bx-bell"></i></a>
+                        </div>
+                      </li>
+                      <li class="dropdown-notifications-list scrollable-container ps">
+                        <ul class="list-group list-group-flush" id="recordatorios">
                     
-                    {{!-- <li>
-                      <a class="dropdown-item" href="#">
-                        <i class="bx bx-user me-2"></i>
-                        <span class="align-middle">Mi Perfil</span>
-                      </a>
-                    </li> --}}
-                  </ul>
-                </li>
+                          {{!-- <li>
+                            <a class="dropdown-item" href="#">
+                              <i class="bx bx-user me-2"></i>
+                              <span class="align-middle">Mi Perfil</span>
+                            </a>
+                          </li> --}}
+                        </ul>
+                      <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></li>
+                      <li class="dropdown-menu-footer border-top">
+                        <a href="javascript:void(0);" class="dropdown-item d-flex justify-content-center p-3">
+                          Ver todos
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                
                 <!--/ User -->
+                
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
+
+                  
                   <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
-                    <div class="avatar avatar-online">
-                      <img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                    <div class="m-2">
+                         {{#if isUser}}
+                          <i class="bi bi-person-square btn btn-primary"> </i>
+                        {{else}}
+                          <i class="bi bi-question-square btn btn-outline-warning"></i>
+                        {{/if}} 
                     </div>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                      
-                      {{#if isLogin}}
-                      
-                        <div class="d-flex">
-                          <div class="flex-shrink-0 me-3">
+                      {{#if isUser}}
+                         <a class="dropdown-item" href="#">
+                          <div class="d-flex">
+                            <div class="flex-shrink-0 me-3">
                               <div class="avatar avatar-online">
-                                <img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+                                <img src="https://www.prorun.com.ar/wp-content/uploads/2020/09/pro-run-20.png" alt="" class="w-px-40 h-auto rounded-circle">
                               </div>
-                           </div>
-                          <div class="flex-grow-1">
-                              <span class="fw-semibold d-block">{{apellido}}</span>
-                              <small class="text-muted">{{nombre}}</small> </div>
+                            </div>
+                            <div class="flex-grow-1">
+                              <span class="fw-semibold d-block">{{isUser.apellido}}</span>
+                              <small class="text-muted">{{isUser.nombre}}</small>
+                            </div>
                           </div>
+                        </a>
                       {{else}}
                         <a href="/login" class=" btn btn-sm btn-outline-primary dropdown-item">Ingresar</a>
                       {{/if}} 
-                      
-
-
-                      
+                     
                     </li>
                     
                     <li>
@@ -335,9 +357,9 @@
                       </a>
                     </li> --}}
                     
-                     {{#if isLogin}}
+                     {{#if isUser}}
                       <li>
-                        <a class="dropdown-item" href="auth-login-basic.html">
+                        <a class="dropdown-item" href="/login/logout">
                           <i class="bx bx-power-off me-2"></i>
                           <span class="align-middle">Salir</span>
                         </a>
@@ -456,7 +478,7 @@
             //recorre el data y lo muestra en el ul con el id recordatorios\
             console.log(data);
             $.each(data, function(index, val) {
-              $('#recordatorios').append('<li class="list-group-item d-flex align-items-center justify-content-between"><div class="text-small"><strong class="d-block">'+val.nombre+'</strong><span class="d-block text-muted">'+val.fecha_cita+' - '+val.hora+'</span></div><div class="ms-2 text-end"><a href="https://api.whatsapp.com/send?phone='+val.contacto_paciente+'&text=Hola '+val.nombre+' este mensaje es un recordatorio para tu cita pactada para el dia '+val.fecha_cita+' hora '+val.hora+'. '+recomendaciones+' ¡Nos vemos pronto!" target="_blank" class="btn btn-sm btn-primary">Enviar</a></div></li>');
+              $('#recordatorios').append('<li class="list-group-item list-group-item-action dropdown-notifications-item marked-as-read m-2"> <div class="d-flex"><div class="flex-shrink-0 me-3"><div class="avatar"><span class="avatar-initial rounded-circle bg-label-warning"><a href="https://api.whatsapp.com/send?phone='+val.contacto_paciente+'&text=Hola '+val.nombre+' este mensaje es un recordatorio para tu cita pactada para el dia '+val.fecha_cita+' hora '+val.hora+'. '+recomendaciones+' ¡Nos vemos pronto!" target="_blank"><i class="bx bx-bell"></i></a></span></div></div><div class="flex-grow-1"><h6 class="mb-1">'+val.nombre+'</h6><p class="mb-0">'+val.fecha_cita+' - '+val.hora+'</p><small class="text-muted">ahora</small></div><div class="flex-shrink-0 dropdown-notifications-actions"><a  class="dropdown-notifications-read"><span class="badge badge-dot"></span></a><a href="javascript:void(0)" class="dropdown-notifications-archive"><span class="bx bx-x"></span></a></div></div></li>');
             });
             //muestra la cantidad de recordatorios en el span con el id cantidadRecordatorios
             $('#cantidadrecordatorios').html(data.length);
@@ -478,7 +500,7 @@
             "order": [[ 1, "asc" ],[ 2, "asc" ]],
             //sacale el ordenamiento cuando esta en la url tenga /agenda
             //"ordering": false,
-
+            
             // ponelo en español
             "language": {
               "url": "../assets/vendor/libs/datatables/datatables.es.json"
@@ -639,11 +661,11 @@
                             
                         }
                       });
-                      var title = event.title;
-                      var message = 'La cita se movio a la fecha '+fecha_cita;
-                      var duration = 5000; // 5 segundos
-                      
-                      showBootstrapToast(title, message, duration);
+                      let title = event.title;
+                      let message = 'La cita se movio a la fecha '+fecha_cita;
+                      let duration = 5000; // 5 segundos
+                      let type = 'bg-success'; // 'info', 'success', 'warning', 'danger'
+                      showBootstrapToast(title, message, duration, type);
 
 
                   },
@@ -714,3 +736,114 @@
   </body>
 
 </html>
+{{else}}
+<html lang="en" class="light-style  customizer-hide" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <title>Login Basic - Pages | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    
+    <meta name="description" content="Most Powerful &amp; Comprehensive Bootstrap 5 HTML Admin Dashboard Template built for developers!">
+    <meta name="keywords" content="dashboard, bootstrap 5 dashboard, bootstrap 5 design, bootstrap 5">
+    <!-- Canonical SEO -->
+    <link rel="canonical" href="https://themeselection.com/products/sneat-bootstrap-html-admin-template/">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&amp;display=swap" rel="stylesheet">
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css">
+    
+    
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css">
+    <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css">
+    <link rel="stylesheet" href="../assets/css/demo.css">
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css">
+    
+    
+
+    <!-- Page CSS -->
+    <!-- Page -->
+<link rel="stylesheet" href="../assets/vendor/css/pages/page-auth.css">
+    <!-- Helpers -->
+    <script src="../assets/vendor/js/helpers.js"></script><style type="text/css">
+.layout-menu-fixed .layout-navbar-full .layout-menu,
+.layout-page {
+  padding-top: 0px !important;
+}
+.content-wrapper {
+  padding-bottom: 0px !important;
+}</style>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="../assets/js/config.js"></script>
+    
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async="async" src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    <!-- Custom notification for demo -->
+    <!-- beautify ignore:end -->
+
+<style type="text/css">
+@font-face {
+  font-weight: 400;
+  font-style:  normal;
+  font-family: circular;
+
+  src: url('chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/fonts/CircularXXWeb-Book.woff2') format('woff2');
+}
+
+@font-face {
+  font-weight: 700;
+  font-style:  normal;
+  font-family: circular;
+
+  src: url('chrome-extension://liecbddmkiiihnedobmlmillhodjkdmb/fonts/CircularXXWeb-Bold.woff2') format('woff2');
+}</style></head>
+
+  {{{body}}}
+  <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+  <script src="../assets/vendor/libs/popper/popper.js"></script>
+  <script src="../assets/vendor/js/bootstrap.js"></script>
+  <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+  
+  <script src="../assets/vendor/js/menu.js"></script>
+  <!-- endbuild -->
+
+  <!-- Vendors JS -->
+  
+  
+
+  <!-- Main JS -->
+  <script src="../assets/js/main.js"></script>
+
+  <!-- Page JS -->
+  
+  
+  
+  <!-- Place this tag in your head or just before your close body tag. -->
+  <script async="" defer="" src="https://buttons.github.io/buttons.js"></script>
+  
+
+
+
+<div id="h10-xray"></div><div id="h10-xray-keywords"></div><div id="h10-asin-grabber"></div><div id="h10-demand"></div><div id="h10-inventory"></div><div id="h10-profitability-calculator"></div><div id="h10-review"></div><div id="h10-xray-walmart"></div><div id="h10-token-connection"></div><div id="h10-page-widget"></div><div id="loom-companion-mv3" ext-id="liecbddmkiiihnedobmlmillhodjkdmb"><section id="shadow-host-companion"></section></div></body></html>
+{{/if}} 

@@ -43,7 +43,7 @@ pacienteHtmlRouter.get("/alta", isUser, async (req, res) => {
     try {
         const results = await ejecutarConsulta('select * from paciente');
         
-        return res.status(200).render("pacientealta", { pacientes: results });
+        return res.status(200).render("pacientealta", { pacientes: results,isUser:req.session.usuario });
     }  catch (error) {
         console.error(error);
         return res.status(404).json({msg:"fallo"});
@@ -52,7 +52,7 @@ pacienteHtmlRouter.get("/alta", isUser, async (req, res) => {
    
 });
 
-pacienteHtmlRouter.get("/", async (req, res) => {
+pacienteHtmlRouter.get("/", isUser, async (req, res) => {
     let dni=req.query.dni;
     
     if (dni) {
@@ -70,7 +70,7 @@ pacienteHtmlRouter.get("/", async (req, res) => {
         const results = await ejecutarConsulta("SELECT DATE_FORMAT(nacimiento_paciente, '%d/%m/%Y') AS nacimiento_paciente, paciente.* FROM paciente");
         //console.log(results);
 
-        return res.status(200).render("paciente", { pacientes: results });
+        return res.status(200).render("paciente", { pacientes: results ,isUser:req.session.usuario});
     }  catch (error) {
         console.error(error);
         return res.status(404).json({msg:"fallo"});
@@ -79,7 +79,7 @@ pacienteHtmlRouter.get("/", async (req, res) => {
    
 });
 
-pacienteHtmlRouter.get("/siguiente", async (req, res) => {
+pacienteHtmlRouter.get("/siguiente", isUser, async (req, res) => {
     
     try {
         const pactadas = await ejecutarConsulta("SELECT count(*) AS pactadas FROM agenda_estados WHERE id_estado = 1");
@@ -97,7 +97,7 @@ pacienteHtmlRouter.get("/siguiente", async (req, res) => {
 
         //console.log(results);
         
-        return res.status(200).render("proximo", { pacientes: results,pactadas:pactadas,maniana:maniana,hoy:hoy,ensala:ensala });
+        return res.status(200).render("proximo", { pacientes: results,pactadas:pactadas,maniana:maniana,hoy:hoy,ensala:ensala ,isUser:req.session.usuario});
     }  catch (error) {
         console.error(error);
         return res.status(404).json({msg:"fallo"});
@@ -106,7 +106,7 @@ pacienteHtmlRouter.get("/siguiente", async (req, res) => {
    
 });
 
-pacienteHtmlRouter.get("/taller", async (req, res) => {
+pacienteHtmlRouter.get("/taller",  isUser,async (req, res) => {
     let id=req.query.id;
        try {
             let fecha = new Date();
@@ -116,7 +116,7 @@ pacienteHtmlRouter.get("/taller", async (req, res) => {
               
            const pacientes = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%d/%m/%Y') AS fecha_formateada, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2));");
            
-           return res.status(200).render("/proximo", { pacientes: pacientes });
+           return res.status(200).render("/proximo", { pacientes: pacientes ,isUser:req.session.usuario});
        }  catch (error) {
            console.error(error);
            return res.status(404).json({msg:"fallo"});
@@ -124,14 +124,14 @@ pacienteHtmlRouter.get("/taller", async (req, res) => {
        
    });
 
-pacienteHtmlRouter.get("/consulta", async (req, res) => {
+pacienteHtmlRouter.get("/consulta",  isUser,async (req, res) => {
  let id=req.query.id;
     try {
        
         const results = await ejecutarConsulta("SELECT DATE_FORMAT(nacimiento_paciente, '%d/%m/%Y') AS fecha_formateada_nacimiento, paciente.* FROM paciente WHERE id_paciente="+id);
          //
         
-        return res.status(200).render("pacientealta", { paciente: results,modificar:false});
+        return res.status(200).render("pacientealta", { paciente: results,modificar:false,isUser:req.session.usuario});
     }  catch (error) {
         console.error(error);
         return res.status(404).json({msg:"fallo"});
@@ -139,7 +139,7 @@ pacienteHtmlRouter.get("/consulta", async (req, res) => {
     
 });
 
-pacienteHtmlRouter.get("/modificar", async (req, res) => {
+pacienteHtmlRouter.get("/modificar", isUser, async (req, res) => {
     let id=req.query.id;
 
        try {
@@ -153,8 +153,19 @@ pacienteHtmlRouter.get("/modificar", async (req, res) => {
               }
            }
            const paciente = await ejecutarConsulta(query);
-            // crea una constante que tenga los archivos de la carpeta storage/req.query.dni y que sean .png
             
+    
+            const queryCitasConDni_paciente = `Select a.*,b.*,c.*,d.*,DATE_FORMAT(fecha_cita,'%d-%m-%Y') AS fecha, DATE_FORMAT(fecha_cita,'%H:%i') AS hora FROM agenda a,estados b, agenda_estados c,paciente d WHERE a.id_agenda = c.id_agenda AND   c.id_estado = b.id_estado AND   a.id_paciente = d.id_paciente AND dni_paciente = ${req.query.dni}`;
+                //ejecuta el query
+             //ahora traeme la cantidad de citas pactadas y que hayan estado en sala de espera
+            const pactadas = await ejecutarConsulta(`SELECT COUNT(*) AS pactadas FROM agenda a, agenda_estados b WHERE a.id_agenda = b.id_agenda AND b.id_estado = 2 AND a.id_paciente = ${paciente[0].id_paciente}`);
+            //ahora busca la cita mas actual y dame la fecha de la proxima cita
+            const proximacita = await ejecutarConsulta(`SELECT DATE_FORMAT(proxima_cita,'%d-%m-%Y') AS proxima_cita FROM agenda WHERE id_paciente = ${paciente[0].id_paciente} ORDER BY proxima_cita DESC LIMIT 1`);
+             console.log("proximacita",proximacita);
+             console.log("pactadas",pactadas);  
+            const citas = await ejecutarConsulta(queryCitasConDni_paciente);
+            console.log("citas",citas);
+            // crea una constante que tenga los archivos de la carpeta storage/req.query.dni y que sean .png
             const rutaCarpetaArchivos = path.join(__dirname, `/public/storage/${req.query.dni}`);
             //crea la carpeta si no existe
             console.log(__dirname)
@@ -172,10 +183,10 @@ pacienteHtmlRouter.get("/modificar", async (req, res) => {
             
             console.log("files",files);
             console.log("rutaCarpetaArchivos",rutaCarpetaArchivos);
-
+            
             //
            
-           return res.status(200).render("pacientealta", { paciente,modificar:true,files,rutaCarpetaArchivos});
+           return res.status(200).render("pacientealta", { paciente,modificar:true,files,rutaCarpetaArchivos,isUser:req.session.usuario,citas,pactadas,proximacita});
        }  catch (error) {
            console.error(error);
            return res.status(404).json({msg:"fallo"});
