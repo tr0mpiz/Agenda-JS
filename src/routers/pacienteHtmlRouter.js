@@ -83,7 +83,7 @@ pacienteHtmlRouter.get("/siguiente", isUser, async (req, res) => {
     
     try {
         const pactadas = await ejecutarConsulta("SELECT count(*) AS pactadas FROM agenda_estados WHERE id_estado = 1");
-        const ensala = await ejecutarConsulta("SELECT count(*) AS ensala FROM agenda_estados WHERE id_estado = 2");
+        const ensala = await ejecutarConsulta("SELECT count(*) AS ensala FROM agenda_estados WHERE id_estado = 2 AND id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado NOT IN (6,3,4,5,1) )");
         
         const fechaCita = new Date();
         fechaCita.setDate(fechaCita.getDate() + 1);
