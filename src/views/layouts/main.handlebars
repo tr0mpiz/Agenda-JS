@@ -72,7 +72,7 @@
   <!-- Modal -->
   
     
-      <div class="modal" id="modal-event" tabindex="-1" aria-modal="true" role="dialog">
+      <div class="modal fade" id="modal-event" tabindex="-1" aria-modal="true" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
           <form id="add-event" method="POST" action="">
           <div class="modal-content">
@@ -118,16 +118,25 @@
               </div>
               <div class="row g-2">
                 <div class="col mb-0">
+                 <div class="form-check form-switch">
+                    <input class="form-check-input float-end form-control" type="checkbox" role="switch" name="primeravez" id="primeravez" >¿Primera vez?
+                  </div>
+                  
+                </div>
+                <div class="col mb-0">
                   <label for="event-descriptio" class="form-label"   >Observacion</label>
                   <textarea  id="comentario_cita" class="form-control" name="comentario_cita"  cols="30" rows="10">Sin comentarios</textarea>
                 </div>
                 
+                
               </div>
               <div class="row g-2 m-2">
-               <div class="col mb-0">
+               
+                <div class="col-4 text-end">
                   <button type="submit" class="btn btn-primary" id="add-even-submit">Agregar Cita</button>
                 </div>
               </div>
+              
               
             </div>
             {{!-- <div class="modal-footer">
@@ -683,7 +692,14 @@
                         dataType: 'json',
                         success: function(response){
                           
-                          console.log(response);
+                          let primeravez = response[0].primeravez;
+                          
+                          if(primeravez == 1){
+                            $("#primeravez").prop("checked", true);
+                          }else{
+                            $("#primeravez").prop("checked", false);
+                          }
+                          //console.log(response);
                           $('#dni_paciente').text(response[0].dni_paciente);
                           $('#id_agenda').val(response[0].id_agenda);
                           $('#event-description-add').html(response[0].fecha_cita);

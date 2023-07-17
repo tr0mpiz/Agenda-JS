@@ -33,7 +33,7 @@ agendaHtmlRouter.get("/calendario", isUser, async (req, res) => {
     if(json==1){
         
         const citas = await ejecutarConsulta("SELECT  CONCAT(nombre_paciente, ' ', apellido_paciente) AS title, a.comentario_cita AS description, DATE_FORMAT(fecha_cita,'%Y-%m-%d %H:%i:%s') AS start, DATE_ADD(DATE_FORMAT(fecha_cita,'%Y-%m-%d %H:%i:%s'), INTERVAL 30 MINUTE) AS end ,color ,'#ffffff' AS textColor,a.id_agenda AS id   FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (6));");
-        console.log(citas);
+        //console.log(citas);
         return res.status(200).json(citas);
     }else{
         
@@ -65,7 +65,7 @@ agendaHtmlRouter.get("/", isUser,async (req, res) => {
     let id=req.query.id;
     if(id){
         try {
-            const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(fecha_cita,'%Y-%m-%d %H:%i:%s') AS fecha_cita, e.descripcion,b.contacto_paciente FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda = "+id);          
+            const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(fecha_cita,'%Y-%m-%d %H:%i:%s') AS fecha_cita, e.descripcion,b.contacto_paciente,a.primeravez FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda = "+id);          
             return res.status(200).json(results);
         }  catch (error) {
             console.error(error);
@@ -102,7 +102,7 @@ agendaHtmlRouter.get("/modificar", isUser,async (req, res) => {
     console.log(id);
     let agendaydatosdepaciente = await ejecutarConsulta(`SELECT a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%Y-%m-%dT%H:%i:%s') AS fecha_formateada, DATE_FORMAT(fecha_cita,'%Y-%m-%dT%H:%i:%s') AS fecha_cita_formateada, DATE_FORMAT(proxima_cita,'%Y-%m-%dT%H:%i:%s') AS proxima_cita_formateada FROM agenda a, paciente b WHERE a.id_paciente=b.id_paciente AND a.id_agenda=${id}`);
     
-    console.log(agendaydatosdepaciente);
+    //console.log(agendaydatosdepaciente);
     return res.status(200).render("agendaalta", { agenda: agendaydatosdepaciente });
     //    try {
     //        const insertagendaestados = await ejecutarConsulta(`INSERT INTO agenda_estados (id_agenda, id_estado, observacion) VALUES (${id}, 6, 'Cancelada por el paciente')`);
@@ -171,10 +171,10 @@ agendaHtmlRouter.get("/alta",isUser, async (req, res) => {
     let id=req.query.id;
     if(id){
         let id=req.query.id;
-        console.log(id);
+        //console.log(id);
         let agendaydatosdepaciente = await ejecutarConsulta(`SELECT a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%Y-%m-%d %H:%i:%s') AS nacimiento_paciente, DATE_FORMAT(fecha_cita,'%Y-%m-%dT%H:%i:%s') AS fecha_cita_formateada , DATE_FORMAT(proxima_cita,'%Y-%m-%dT%H:%i:%s') AS proxima_cita, color FROM agenda a, paciente b WHERE a.id_paciente=b.id_paciente AND a.id_agenda=${id}`);
         
-        console.log(agendaydatosdepaciente);
+       // console.log(agendaydatosdepaciente);
         return res.status(200).render("agendaalta", { agenda: agendaydatosdepaciente });
     }else{
         return res.status(200).render("agendaalta");
@@ -221,31 +221,44 @@ agendaHtmlRouter.post('/alta',async (req, res) => {
       talle_paciente,
       contacto_paciente,
       email_paciente,
-      color_agenda
+      color_agenda,
+      primeravez,
   } = req.body;
     //valida si tiene valor id_agenda
     //io.emit('agregarFila', obj);
 
     //crea un select donde busque en la tabla agenda si el id_agenda existe
-  
+
+    function isChecked(voriable) {
+        
+        if(voriable == "on"){
+            return 1;
+        }else{
+            return 0;
+        }
+
+      }
+      
+      // Ejemplo de uso
+    let isCheckboxChecked = isChecked(primeravez);
     if( id_agenda == 0 ){
 
         
         try {
             console.log("entro al try");
             const sqlPacienteExiste = await ejecutarConsulta(`SELECT * FROM paciente WHERE dni_paciente = ${dni_paciente}`);
-            console.log("sqlPacienteExiste", sqlPacienteExiste);
+            //console.log("sqlPacienteExiste", sqlPacienteExiste);
             
             if(sqlPacienteExiste.length > 0 ){
                 
-                const sqlAgenda = `INSERT INTO agenda (id_paciente, fecha_cita, proxima_cita, comentario_cita, color) VALUES (${sqlPacienteExiste[0].id_paciente}, '${fecha_cita}', '${proxima_cita}', '${comentario_cita}', '${color_agenda}')`;
+                const sqlAgenda = `INSERT INTO agenda (id_paciente, fecha_cita, proxima_cita, comentario_cita, color,primeravez) VALUES (${sqlPacienteExiste[0].id_paciente}, '${fecha_cita}', '${proxima_cita}', '${comentario_cita}', '${color_agenda}' , ${isCheckboxChecked})`;
                 const insertAgenda = await ejecutarConsulta(sqlAgenda);
                 console.log('INSERT agenda ');
             }else{
-                const insertPaciente = await ejecutarConsulta(`INSERT INTO paciente (nombre_paciente, apellido_paciente, dni_paciente, peso_paciente, altura_paciente, edad_paciente, nacimiento_paciente, talle_paciente, contacto_paciente, email_paciente) VALUES ('${nombre_paciente}', '${apellido_paciente}', ${dni_paciente}, 0, 0,0, '2001-01-01 06:30:00',0, ${contacto_paciente}, 'ejemplo@ejemplo.com')`);
+                const insertPaciente = await ejecutarConsulta(`INSERT INTO paciente (nombre_paciente, apellido_paciente, dni_paciente, peso_paciente, altura_paciente, edad_paciente, nacimiento_paciente, talle_paciente, contacto_paciente, email_paciente,comentario_paciente) VALUES ('${nombre_paciente}', '${apellido_paciente}', ${dni_paciente}, 0, 0,0, '2001-01-01 06:30:00',0, ${contacto_paciente}, 'ejemplo@ejemplo.com','')`);
                 const ultimoPaciente = await ejecutarConsulta("Select max(id_paciente) as ultimopaciente from paciente"); 
                 console.log("ultimo : "+ultimoPaciente[0].ultimopaciente);
-                const sqlAgenda = `INSERT INTO agenda (id_paciente, fecha_cita, proxima_cita, comentario_cita, color) VALUES (${ultimoPaciente[0].ultimopaciente}, '${fecha_cita}', '${proxima_cita}', '${comentario_cita}', '${color_agenda}')`;
+                const sqlAgenda = `INSERT INTO agenda (id_paciente, fecha_cita, proxima_cita, comentario_cita, color,primeravez) VALUES (${ultimoPaciente[0].ultimopaciente}, '${fecha_cita}', '${proxima_cita}', '${comentario_cita}', '${color_agenda}' , ${isCheckboxChecked})`;
                 const insertAgenda = await ejecutarConsulta(sqlAgenda);
                 console.log('INSERT paciente y agenda');
             }

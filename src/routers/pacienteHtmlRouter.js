@@ -210,13 +210,14 @@ pacienteHtmlRouter.post("/alta", async (req, res) => {
         talle_paciente,
         contacto_paciente,
         email_paciente,
-        id_paciente
+        id_paciente,
+        comentario_paciente
 
       } = req.body;
       
       if(id_paciente){  
         console.log("modificando paciente");
-        const sql = `UPDATE paciente SET nombre_paciente='${nombre_paciente}', apellido_paciente='${apellido_paciente}', dni_paciente=${dni_paciente}, peso_paciente=${peso_paciente}, altura_paciente=${altura_paciente}, edad_paciente=${edad_paciente}, nacimiento_paciente='${nacimiento_paciente}', talle_paciente=${talle_paciente}, contacto_paciente='${contacto_paciente}', email_paciente='${email_paciente}' WHERE id_paciente=${id_paciente}`;
+        const sql = `UPDATE paciente SET nombre_paciente='${nombre_paciente}', apellido_paciente='${apellido_paciente}', dni_paciente=${dni_paciente}, peso_paciente=${peso_paciente}, altura_paciente=${altura_paciente}, edad_paciente=${edad_paciente}, nacimiento_paciente='${nacimiento_paciente}', talle_paciente=${talle_paciente}, contacto_paciente='${contacto_paciente}', email_paciente='${email_paciente}', comentario_paciente='${comentario_paciente}' WHERE id_paciente=${id_paciente}`;
         console.log(sql);
         try {
             const v = await ejecutarConsulta(sql);
@@ -230,7 +231,7 @@ pacienteHtmlRouter.post("/alta", async (req, res) => {
             }
         }else{
             console.log("guardando paciente");
-            const sql = `INSERT INTO paciente (id_paciente, nombre_paciente, apellido_paciente, dni_paciente, peso_paciente, altura_paciente, edad_paciente, nacimiento_paciente, talle_paciente, contacto_paciente, email_paciente) VALUES (0, '${nombre_paciente}', '${apellido_paciente}', ${dni_paciente}, ${peso_paciente}, ${altura_paciente}, ${edad_paciente}, '${nacimiento_paciente}', ${talle_paciente}, '${contacto_paciente}', '${email_paciente}')`;
+            const sql = `INSERT INTO paciente (id_paciente, nombre_paciente, apellido_paciente, dni_paciente, peso_paciente, altura_paciente, edad_paciente, nacimiento_paciente, talle_paciente, contacto_paciente, email_paciente,comentario_paciente) VALUES (0, '${nombre_paciente}', '${apellido_paciente}', ${dni_paciente}, ${peso_paciente}, ${altura_paciente}, ${edad_paciente}, '${nacimiento_paciente}', ${talle_paciente}, '${contacto_paciente}', '${email_paciente}','')`;
             
             console.log(sql);
             try {
