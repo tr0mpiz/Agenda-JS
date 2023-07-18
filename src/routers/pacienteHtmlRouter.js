@@ -225,7 +225,8 @@ pacienteHtmlRouter.post("/alta", async (req, res) => {
             const v = await ejecutarConsulta(sql);
             console.log('Paciente modificado correctamente');
             //recarga la pagina para que se vea el nuevo paciente
-            return res.status(200).redirect("/paciente/");
+            // que redireccione 2 paginas atras y un estado 200
+            return res.status(200).redirect('back');
 
         }  catch (error) {
             console.error(error);

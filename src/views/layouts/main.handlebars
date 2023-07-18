@@ -91,7 +91,7 @@
                   <input type="datepicker" id="proxima_cita" name="proxima_cita" class="form-control">
                 </div>
                 <div class="col mb-0">
-                  <label class="form-label">Colora</label>
+                  <label class="form-label">Color</label>
                   <input class="form-control"  id="color_agenda" name="color_agenda" type="color" value="#666EE8" id="html5-color-input">
                 </div>
                 
@@ -133,7 +133,10 @@
               <div class="row g-2 m-2">
                
                 <div class="col-4 text-end">
-                  <button type="submit" class="btn btn-primary" id="add-even-submit">Agregar Cita</button>
+                  <button type="submit" class="btn btn-primary m-1" id="add-even-submit">Agregar Cita</button>
+                </div>
+                <div class="col-1 text-end">
+                  <button id="eliminacita" data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bx bx-trash bx-xs' ></i> <span>Eliminar Cita</span>" onclick="" class="btn btn-icon btn-outline-danger m-1"><i class="bi bi-trash"></i></button>
                 </div>
               </div>
               
@@ -702,6 +705,7 @@
                           //console.log(response);
                           $('#dni_paciente').text(response[0].dni_paciente);
                           $('#id_agenda').val(response[0].id_agenda);
+                          $('#eliminacita').attr('onclick', "peticionAjax('/agenda/eliminar?id="+response[0].id_agenda+"','DELETE','true')");
                           $('#event-description-add').html(response[0].fecha_cita);
                           $('#dni_paciente').val(response[0].dni_paciente);
                           $('#nombre_paciente').val(response[0].nombre_paciente);
@@ -709,11 +713,12 @@
                           $('#contacto_paciente').val(response[0].contacto_paciente);
                           $('#comentario_cita').val(response[0].comentario_cita);
                           $('#modal-event').modal('show');
+                          
                           let form = document.getElementById('add-event');
                           form.action = '/agenda/alta?id='+$('#id_agenda').val();
                           let submitButton = form.querySelector('button[type="submit"]');
                           //ponele la clase btn-warninr al boton
-                          submitButton.classList.add('btn-danger');
+                          submitButton.classList.add('btn-warning');
                           //elimina la clase btn-primary
                           submitButton.classList.remove('btn-primary');
                           submitButton.textContent = 'Modificar Cita';
