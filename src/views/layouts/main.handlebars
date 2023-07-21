@@ -56,17 +56,8 @@
 
 <body>
   {{!-- TOAST --}}
-  <div id="toast" class="bs-toast toast toast-placement-ex m-2 fade  top-0 end-0" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
-    <div class="toast-header">
-      <i class="bx bx-bell me-2"></i>
-      <div class="me-auto fw-semibold">Bootstrap</div>
-      <small>Ahora</small>
-      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-    <div class="toast-body">
-      Fruitcake chocolate bar tootsie roll gummies gummies jelly beans cake.
-    </div>
-  </div>
+  <div id="toastContainer" class="toast-container" style="position: fixed; top: 10px; right: 10px; z-index: 9999;"></div>
+
   
   {{!-- TOAST --}}
   <!-- Modal -->
@@ -88,7 +79,7 @@
                 </div>
                 <div class="col mb-0">
                   <label class="form-label">Fecha fin Cita</label>
-                  <input type="datepicker" id="proxima_cita" name="proxima_cita" class="form-control">
+                  <input type="datepicker" id="fecha_fin_cita" name="fecha_fin_cita" class="form-control">
                 </div>
                 <div class="col mb-0">
                   <label class="form-label">Color</label>
@@ -459,12 +450,13 @@
     <!-- Main JS -->
     <script src="../assets/js/main.js"></script>
     <script src="../js/main.js"></script>
+    <script src="../js/index.js"></script>
     <!-- Page JS -->
     <script src="../assets/vendor/libs/jquery/jquery.js"></script>
 
     <script src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.1/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/plug-ins/1.11.1/i18n/Spanish.json"></script>
+    
    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/funcionesHtmlAgenda.js"></script>
@@ -521,12 +513,8 @@
           });
           }else{
             $('#dataTable').DataTable({
-            //ordenar por posicion 1,2
-            //"order": [[ 1, "asc" ]],
-            //sacale el ordenamiento cuando esta en la url tenga /agenda
-            //"ordering": false,
-
-            // ponelo en español
+            'info': false,
+            'searching': false,  
             "language": {
               "url": "../assets/vendor/libs/datatables/datatables.es.json"
             }
@@ -545,31 +533,37 @@
           
 
           document.addEventListener('paste', function(event) {
-
-             const inputFieldsmodalmodal = document.querySelectorAll('#modal-event');
+              //alert('Pegaste algo!');
+             const inputFieldsmodalmodal = document.querySelectorAll('#modal-event input');
+             
               inputFieldsmodalmodal.forEach(function(inputField) {
                   // Obtener el texto pegado
                   const clipboardData = event.clipboardData || window.clipboardData;
                   const pastedText = clipboardData.getData('text');
-
+                  //alert(pastedText)
                   // Obtener el nombre del campo de entrada
                   const fieldName = inputField.id;
-                  
+                  //alert(fieldName)
+
                   // Asignar el texto pegado al campo de entrada correspondiente
                   switch (fieldName) {
                     case 'dni_paciente':
+                      console.log(pastedText.split(',')[0]);
                       document.getElementById('dni_paciente').value = pastedText.split(',')[0];
                       //darle evento change para que busque el paciente
                       document.getElementById('dni_paciente').dispatchEvent(new Event('change'));
                       
                       break;
                     case 'nombre_paciente':
+                    console.log(pastedText.split(',')[1]);
                     document.getElementById('nombre_paciente').value = pastedText.split(',')[1];
                       break;
                     case 'apellido_paciente':
+                    console.log(pastedText.split(',')[2]);
                     document.getElementById('apellido_paciente').value = pastedText.split(',')[2];
                       break;
                     case 'contacto_paciente':
+                    console.log(pastedText.split(',')[3]);
                     document.getElementById('contacto_paciente').value = pastedText.split(',')[3];
                       break;
                     default:
@@ -626,7 +620,9 @@
                   dayClick: function (date, jsEvent, view) {
 
                     $('#fecha_cita').val(date.format('YYYY-MM-DD HH:mm:ss'));
-                    $('#proxima_cita').val(date.format('YYYY-MM-DD HH:mm:ss'));
+                    // asignale el valor a fecha_fin_cita  date.add(30, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+                    $('#fecha_fin_cita').val(date.add(30, 'minutes').format('YYYY-MM-DD HH:mm:ss'));
+
                     $('#modal-title-add').text('Agregar Cita - '+date.format('DD-MM-YYYY HH:mm:ss'));
                     $('#dni_paciente').text('');
                     $('#event-description-add').html("");
@@ -652,6 +648,7 @@
                   eventDrop: function(event,dayDelta,minuteDelta,allDay,revertFunc) {
 
                       let fecha_cita = event.start.format('YYYY-MM-DD HH:mm:ss');
+                      let fecha_fin_cita = event.end.format('YYYY-MM-DD HH:mm:ss');
                       let id = event.id;
                       // crea la variable fecha_cita_fin que sea igual a fecha_cita + 30 minutos
                      
@@ -663,6 +660,7 @@
                       let data = {
                         id_agenda: id,
                         fecha_cita: fecha_cita,
+                        fecha_fin_cita: fecha_fin_cita
                       };
                       $.ajax({
                         url: url,
@@ -681,11 +679,44 @@
 
 
                   },
+                  eventResize: function(event, dayDelta, minuteDelta, revertFunc) {
+                    // Aquí se actualizará la duración del evento al cambiar su tamaño
+                    let fecha_cita = event.start.format('YYYY-MM-DD HH:mm:ss');
+                    let id = event.id;
+                    // Actualizar la duración del evento
+                    let fecha_fin_cita = event.end.format('YYYY-MM-DD HH:mm:ss');
+                    // Resto la fecha de inicio a la fecha de fin para obtener la duración en minutos
+                    //let duracion = moment.duration(event.end.diff(event.start)).asMinutes();
+                    //alert(fecha_fin_cita);
+                    let url = '/agenda/alta?id='+id;
+
+                    let data = {
+                      id_agenda: id,
+                      fecha_cita: fecha_cita,
+                      fecha_fin_cita: fecha_fin_cita
+                    };
+                    console.log (data);
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: data,
+                        success: function(response){
+                            console.log(response);
+                        }
+                      });
+                      let title = event.title;
+                      let message = 'La cita se movio a la fecha desde '+fecha_cita+' hasta '+fecha_fin_cita;
+                      let duration = 5000; // 5 segundos
+                      let type = 'bg-success'; // 'info', 'success', 'warning', 'danger'
+                      showBootstrapToast(title, message, duration, type);
+
+                  },
                   eventClick: function (calEvent, jsEvent, view) {
                       console.log(calEvent);
 
                       $('#fecha_cita').val(calEvent.start.format('YYYY-MM-DD HH:mm:ss'));
-                      $('#proxima_cita').val(calEvent.end.format('YYYY-MM-DD HH:mm:ss'));
+                      $('#fecha_fin_cita').val(calEvent.end.format('YYYY-MM-DD HH:mm:ss'));
                       $('#modal-title-add').text(calEvent.title);
                       const id = calEvent.id;
                       const url = '/agenda?id='+id;
@@ -779,7 +810,7 @@
     <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css">
     
     
-
+    
     <!-- Core CSS -->
     <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css">
     <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css">

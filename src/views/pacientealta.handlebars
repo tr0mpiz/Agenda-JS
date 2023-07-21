@@ -240,6 +240,7 @@
               </div>
 
             </div>
+            
             <div class="row mb-3 offset-xl-1">
               
               <div class="col-sm-4 col-xl-2 ">
@@ -271,19 +272,55 @@
 
             
             </div>
+
             
-            <div class="row mb-3">
-             
+            <div class="row mb-3 offset-xl-1">
+              <div class="col-sm-6 col-xl-4 ">
+                <label class=" col-form-label" for="alergia"><i class="bx bx-heart"></i>  Alergia</label>
+                <textarea   class="form-control" required id="alergia" name="alergia" aria-describedby="alergia2">{{ paciente.0.alergia }}</textarea>
+              </div>
+              <div class="col-sm-6 col-xl-5 ">
+                <label class=" col-form-label" for="diabetico"><i class="bx bx-heart"></i>  Diabetico</label>
+                <textarea   class="form-control" required id="diabetico" name="diabetico" aria-describedby="diabetico2">{{ paciente.0.diabetico }}</textarea>
+              </div>
               
             </div>
-            <div class="row mb-3">
+              <div class="row mb-6 offset-xl-1">
+
+                <div class="col-sm-6 col-xl-4">
+                  <label class=" col-form-label" for="tobillo"><i class="bi bi-clipboard2-pulse"></i>  Tobillo</label>
+                  <textarea  class="form-control" required id="tobillo" name="tobillo" aria-describedby="tobillo2">{{ paciente.0.tobillo }}</textarea>
+                </div>
               
-              
-            </div>
+                <div class="col-sm-6 col-xl-5  ">
+                  <label class=" col-form-label" for="rodilla"><i class="bi bi-clipboard2-pulse"></i>  Rodilla</label>
+                  <textarea   class="form-control" required id="rodilla" name="rodilla" aria-describedby="rodilla2">{{ paciente.0.rodilla }}</textarea>
+                </div>
+              </div>
+
+              <div class="row mb-3 offset-xl-1">
+                <div class="col-sm-6 col-xl-4 ">
+                  <label class=" col-form-label" for="cadera"><i class="bi bi-clipboard2-pulse"></i>  Cadera</label>
+                  <textarea  class="form-control" required id="cadera" name="cadera" aria-describedby="cadera">{{ paciente.0.cadera }}</textarea>
+                </div>
+                <div class="col-sm-6 col-xl-5 ">
+                  <label class=" col-form-label" for="columna"><i class="bi bi-clipboard2-pulse"></i>  Columna</label>
+                  <textarea class="form-control" required id="columna" name="columna" aria-describedby="columna2">{{ paciente.0.columna }}</textarea>
+                </div>
+                <div class="col-sm-6 col-xl-4">
+                  <label class=" col-form-label" for="calzados"><i class="bx bx-body"></i>  Calzados</label>
+                  <textarea  class="form-control" required id="calzados" name="calzados" aria-describedby="calzados2">{{ paciente.0.calzados }}</textarea>
+                </div>
+                <div class="col-sm-6 col-xl-5 ">
+                  <label class=" col-form-label" for="patologia"><i class="bx bx-heart"></i>  Patologias</label>
+                  <textarea   class="form-control" required id="patologia" name="patologia" aria-describedby="patologia2">{{ paciente.0.patologia }}</textarea>
+                </div>
+                
+              </div>
             <div class="row mb-3">
               <div class="card-header d-flex align-items-center justify-content-between">
                 
-                <h5 class="mb-0"><i class="bi bi-clipboard2-pulse"></i>  Sintomatologia 
+                <h5 class="mb-0"><i class="bi bi-clipboard2-pulse"></i>  Patologias 
                   </h5>
               </div>
               

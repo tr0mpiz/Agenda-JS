@@ -5,66 +5,54 @@ const socket = io();
 //     console.log(data);
 // });
 
-// socket.on("response-post", (data) => {
-//     let producto = data.msg.producto;
-//     let lista = document.getElementById("lista-product");
-//     lista.innerHTML += `<div id="product-${producto.producId}" class="card"  style="width: 18rem;">
-//                             <img class="card-img-top" src="${producto.thumbnail}" alt="Card image cap" />
-//                             <div class="card-body">
-//                                 <h5 class="card-title">${producto.title}</h5>
-//                                 <p class="card-text">${producto.description}</p>
-//                                 <p class="card-text">Precio:${producto.price}</p>
-//                                 <p class="card-text">Stock:${producto.stock}</p>
-//                             </div>
-//                             <button type="button" class="btn btn-danger" onclick="borrarProducto('${producto.producId}')">Delete</button>
-//                             </div>`;
-// });
+socket.on("mensaje", (data) => {
+    
+    showBootstrapToast("Ahora", data, 6000, "bg-info");
 
-socket.on("response-post", (data) => {
-    console.log("response-post", data);
-    // let producto = JSON.parse(JSON.stringify(data.msg));
-    let producto = data.msg;
-    console.log("producto", producto);
-    let lista = document.getElementById("table-product-body");
-    lista.innerHTML += `<tr id="product-${producto._id}" >
-                            <td>${producto._id}</td>
-                            <td>${producto.title}</td>
-                            <td>${producto.code}</td>
-                            <td>${producto.description}</td>
-                            <td>${producto.price}</td>
-                            <td>${producto.stock}</td>
-                            <td><img class="" src="${producto.thumbnail}" /></td>
-                            <td><button type="button" class="btn btn-danger" onclick="borrarProducto('${producto._id}')"><i class="bi bi-trash3-fill"></i></button></td>
+    
+});
+
+
+socket.on("agregarFila", (data) => {
+
+    let paciente = data;
+
+    //solo mostra el toast si la pagina es paciente/siguiente
+    if (window.location.href.includes("paciente/siguiente")) {
+        showBootstrapToast("Ahora", "El  Paciente "+paciente[0].nombre_paciente+" "+paciente[0].apellido_paciente+" esta esperando ser atendido.", 6500, "bg-info");
+        ring("sonido.mp3")
+    }
+    
+    console.log("paciente", paciente);
+
+    let cantidadsala = document.getElementById("cantidadsala").textContent;
+    //sumale 1
+    cantidadsala = parseInt(cantidadsala) + 1;
+    //guarda el valor en el input
+    document.getElementById("cantidadsala").textContent = cantidadsala;
+
+    
+    let lista = document.getElementById("table-proximo");
+    //elimina el td que tiene el class="dataTables_empty"
+    let td = document.getElementsByClassName("dataTables_empty")[0]
+    if (td) {
+        td.remove();
+    }
+    lista.innerHTML += `<tr id="product-${paciente[0].id_agenda}" >
+                            <td>${paciente[0].fecha_cita}</td>
+                            <td>${paciente[0].nombre_paciente}</td>
+                            <td>${paciente[0].apellido_paciente}</td>
+                            <td>${paciente[0].dni_paciente}</td>
+                            <td>${paciente[0].contacto_paciente}</td>
+                            <td><span class="badge bg-white text-primary">EN SALA</span></td>
+                            <td>
+                            <div class="btn-group btn-group-horizontal">
+                                
+                                <a data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bi ib-wrench-adjustable' ></i> <span>Enviar a Taller</span>"  href="#"  class="btn btn-icon btn-outline-success ml-1" onclick="peticionAjax('/agenda/entaller?id=${paciente[0].id_agenda}','GET','true')"><i class="bi bi-wrench-adjustable"></i> </a>
+                                <a data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bx bx-pencil bx-xs' ></i> <span>Modifica Paciente</span>" href="/paciente/modificar?dni=${paciente[0].dni_paciente}" class="btn btn-icon btn-outline-warning ml-1"><i class="bi bi-pencil-fill"></i></a>
+                            </div>
+                            </td>
                         </tr>`;
-});
-
-socket.on("response-post-error", (data) => {
-    console.log(data);
-    toast("Ha ocurrido un error!!", "error", "bottom-right");
-});
-
-socket.on("response-post-toast", (data) => {
-    console.log(data);
-    toast("El producto se a cargado con exito!!", "success", "bottom-right");
-});
-socket.on("response-addCart-toast", (data) => {
-    console.log(data);
-    toast("El producto se agregado el producto al carrito con exito!!", "success", "bottom-right");
-});
-
-socket.on("response-delete-error", (data) => {
-    console.log(data);
-    toast("Ha ocurrido un error!!", "error", "bottom-right");
-});
-
-socket.on("response-delete", (data) => {
-    let id = data.msg;
-    let elemento = document.getElementById(`product-${id}`);
-    elemento.remove();
-});
-
-socket.on("response-delete-toast", (data) => {
-    toast("El producto se a eliminado con exito!!", "success", "bottom-right");
 });
 
 function recuperarDatosDelSessionStorage() {

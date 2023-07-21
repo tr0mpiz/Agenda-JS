@@ -1,4 +1,5 @@
 
+
 const asignarProximaCita = () => {
     const inputFechaCita = document.getElementById('fecha_cita');
     const inputProximaCita = document.getElementById('proxima_cita');
@@ -75,35 +76,8 @@ dni_paciente.addEventListener('change', async () =>{
 
 
 
-$(document).ready(function () {
 
-    
-    $("#agendar-cita-form").submit(function (event) {
-       
 
-        let formData = new FormData(this);
-        const urlActual = window.location.href;
-       // alert(urlActual);
-        console;log(urlActual);
-        $.ajax({
-            url: urlActual,
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function (response) {
-                console.log(response);
-                toast("La cita se a agrego con exito !", "success", "bottom-right");
-                //windows.location.reload();
-                // Manejar la respuesta del servidor
-            },
-            error: function (error) {
-                console.log(error);
-                toast("Ha ocurrido un error, recarga la pagina.", "error", "bottom-right");
-                // Manejar errores de la solicitud
-            },
-        });
-    });
-});
+
 
 

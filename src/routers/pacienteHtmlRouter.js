@@ -5,6 +5,7 @@ import { isUser } from "../middleware/Helper.js";
 import { __dirname, con, ejecutarConsulta } from "../utils.js";
 
 
+
 //import { agendaService } from "../services/agenda.services.js";
 //import { agendaModel } from "../DAO/models/agenda.model.js";
 
@@ -157,7 +158,7 @@ pacienteHtmlRouter.get("/modificar", isUser, async (req, res) => {
            const paciente = await ejecutarConsulta(query);
             
     
-            const queryCitasConDni_paciente = `Select a.*,b.*,c.*,d.*,DATE_FORMAT(fecha_cita,'%d-%m-%Y') AS fecha, DATE_FORMAT(fecha_cita,'%H:%i') AS hora FROM agenda a,estados b, agenda_estados c,paciente d WHERE a.id_agenda = c.id_agenda AND   c.id_estado = b.id_estado AND   a.id_paciente = d.id_paciente AND dni_paciente = ${req.query.dni}`;
+            const queryCitasConDni_paciente = `Select a.*,b.*,c.*,d.*,DATE_FORMAT(fecha_cita,'%d-%m-%Y') AS fecha, DATE_FORMAT(fecha_cita,'%H:%i') AS hora FROM agenda a,estados b, agenda_estados c,paciente d WHERE a.id_agenda = c.id_agenda AND   c.id_estado = b.id_estado AND   a.id_paciente = d.id_paciente AND dni_paciente = ${req.query.dni} ORDER BY fecha,hora DESC`;
                 //ejecuta el query
              //ahora traeme la cantidad de citas pactadas y que hayan estado en sala de espera
             const pactadas = await ejecutarConsulta(`SELECT COUNT(*) AS pactadas FROM agenda a, agenda_estados b WHERE a.id_agenda = b.id_agenda AND b.id_estado = 2 AND a.id_paciente = ${paciente[0].id_paciente}`);
@@ -213,13 +214,21 @@ pacienteHtmlRouter.post("/alta", async (req, res) => {
         contacto_paciente,
         email_paciente,
         id_paciente,
-        comentario_paciente
+        comentario_paciente,
+        alergia,
+        diabetico,
+        tobillo,
+        rodilla,
+        cadera,
+        columna,
+        calzados,
+        patologia
 
       } = req.body;
       
       if(id_paciente){  
         console.log("modificando paciente");
-        const sql = `UPDATE paciente SET nombre_paciente='${nombre_paciente}', apellido_paciente='${apellido_paciente}', dni_paciente=${dni_paciente}, peso_paciente=${peso_paciente}, altura_paciente=${altura_paciente}, edad_paciente=${edad_paciente}, nacimiento_paciente='${nacimiento_paciente}', talle_paciente=${talle_paciente}, contacto_paciente='${contacto_paciente}', email_paciente='${email_paciente}', comentario_paciente='${comentario_paciente}' WHERE id_paciente=${id_paciente}`;
+        const sql = `UPDATE paciente SET nombre_paciente='${nombre_paciente}', apellido_paciente='${apellido_paciente}', dni_paciente=${dni_paciente}, peso_paciente=${peso_paciente}, altura_paciente=${altura_paciente}, edad_paciente=${edad_paciente}, nacimiento_paciente='${nacimiento_paciente}', talle_paciente=${talle_paciente}, contacto_paciente='${contacto_paciente}', email_paciente='${email_paciente}', comentario_paciente='${comentario_paciente}', alergia='${alergia}', diabetico='${diabetico}', tobillo='${tobillo}', rodilla='${rodilla}', cadera='${cadera}', columna='${columna}', calzados='${calzados}', patologia='${patologia}' WHERE id_paciente=${id_paciente}`;
         console.log(sql);
         try {
             const v = await ejecutarConsulta(sql);
@@ -234,8 +243,7 @@ pacienteHtmlRouter.post("/alta", async (req, res) => {
             }
         }else{
             console.log("guardando paciente");
-            const sql = `INSERT INTO paciente (id_paciente, nombre_paciente, apellido_paciente, dni_paciente, peso_paciente, altura_paciente, edad_paciente, nacimiento_paciente, talle_paciente, contacto_paciente, email_paciente,comentario_paciente) VALUES (0, '${nombre_paciente}', '${apellido_paciente}', ${dni_paciente}, ${peso_paciente}, ${altura_paciente}, ${edad_paciente}, '${nacimiento_paciente}', ${talle_paciente}, '${contacto_paciente}', '${email_paciente}','')`;
-            
+            const sql = `INSERT INTO paciente (id_paciente, nombre_paciente, apellido_paciente, dni_paciente, peso_paciente, altura_paciente, edad_paciente, nacimiento_paciente, talle_paciente, contacto_paciente, email_paciente,comentario_paciente, alergia, diabetico, tobillo, rodilla, cadera, columna, calzados, patologia) VALUES (NULL, '${nombre_paciente}', '${apellido_paciente}', ${dni_paciente}, ${peso_paciente}, ${altura_paciente}, ${edad_paciente}, '${nacimiento_paciente}', ${talle_paciente}, '${contacto_paciente}', '${email_paciente}', '${comentario_paciente}', '', '', '', '', '', '', '', '')`;
             console.log(sql);
             try {
                 const v = await ejecutarConsulta(sql);

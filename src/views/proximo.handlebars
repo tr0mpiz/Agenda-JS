@@ -40,13 +40,8 @@
                 </div>
               </div>
             </div>
-             <span class="fw-semibold d-block mb-1">EN SALA</span>
-             {{#if ensala.0.ensala}}
-              <h3 class="card-title mb-2">{{ ensala.0.ensala }}</h3>
-              {{else}}
-              <h3 class="card-title mb-2">0</h3>
-              {{/if}}
-            
+             <span class="fw-semibold d-block mb-1 en">EN SALA</span>
+             <h3 class="card-title mb-2" id="cantidadsala" >{{#if ensala.0.ensala}} {{ ensala.0.ensala }}{{else}}0{{/if}}</h3>
           </div>
         </div>
       </div>
@@ -156,7 +151,7 @@
                         </tr>
                     </thead>
                     
-                    <tbody id="table-product-body">
+                    <tbody id="table-proximo">
                       {{#each pacientes}}
                       <tr id="paciente-{{this.id_paciente}}">
                         <td>{{this.fecha_cita}}</td>
@@ -167,9 +162,9 @@
                         <td data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<span>{{this.observacion}}</span>"><span class="badge bg-white text-primary">{{this.descripcion}}</span></td>
                         <td>
                           <div class="btn-group btn-group-horizontal">
-                            <a data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bi bi-eye-fill' ></i> <span>Consultar Paciente</span>"  href="/paciente/consulta?id={{this.id_paciente}}" class="btn btn-icon btn-outline-primary m-1"><i class="bi bi-eye-fill"></i></a>
-                             <a data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bi ib-wrench-adjustable' ></i> <span>Enviar a Taller</span>"    class="btn btn-icon btn-outline-success m-1" onclick="peticionAjax('/agenda/entaller?id={{this.id_agenda}}','GET','true')"><i class="bi bi-wrench-adjustable"></i> </a>
-                            <a data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bx bx-pencil bx-xs' ></i> <span>Modifica Paciente</span>" href="/paciente/modificar?dni={{this.dni_paciente}}" class="btn btn-icon btn-outline-warning m-1"><i class="bi bi-pencil-fill"></i></a>
+                            {{!-- <a data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bi bi-eye-fill' ></i> <span>Consultar Paciente</span>"  href="/paciente/consulta?id={{this.id_paciente}}" class="btn btn-icon btn-outline-primary ml-1"><i class="bi bi-eye-fill"></i></a> --}}
+                             <a data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bi ib-wrench-adjustable' ></i> <span>Enviar a Taller</span>" href="#"    class="btn btn-icon btn-outline-success ml-1" onclick="peticionAjax('/agenda/entaller?id={{this.id_agenda}}','GET','true')"><i class="bi bi-wrench-adjustable"></i> </a>
+                            <a data-bs-toggle="tooltip" data-bs-offset="0,4" data-bs-placement="top" data-bs-html="true" title="" data-bs-original-title="<i class='bx bx-pencil bx-xs' ></i> <span>Modifica Paciente</span>" href="/paciente/modificar?dni={{this.dni_paciente}}" class="btn btn-icon btn-outline-warning ml-1"><i class="bi bi-pencil-fill"></i></a>
                           </div>
                         </td>
                       </tr>
@@ -184,6 +179,7 @@
 </div>
 
 
+<script src="/socket.io/socket.io.js"></script>
 <script src="../js/funcionesHtmlAgenda.js"></script>
 <script src="../js/main.js"></script>
 {{! <script></script> }}

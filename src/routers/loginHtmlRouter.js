@@ -13,7 +13,7 @@ export const loginHtmlRouter = express.Router();
 loginHtmlRouter.get("/", async (req, res) => {
     try {
         const results = await ejecutarConsulta("select a.*,b.* from agenda a, paciente b Where a.id_paciente = b.id_paciente;");
-        console.log(results);
+        //console.log(results);
         return res.status(200).render("login", { pacientes: results});
     }  catch (error) {
         console.error(error);
