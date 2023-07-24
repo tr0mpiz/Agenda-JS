@@ -5,7 +5,7 @@ export function isUser(req, res, next) {
             id: req.session.id_usuario,
             nombre: req.session.nombre,
             apellido: req.session.apellido,
-            email: req.session.usuario,
+            email: req.session.correo,
             permisos: req.session.permisos
         };
         req.session.usuario = usuario;

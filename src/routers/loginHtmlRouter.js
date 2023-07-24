@@ -81,6 +81,8 @@ loginHtmlRouter.post('/',async (req, res) => {
                         req.session.id_usuario = insertAgenda[0].id;
                         req.session.nombre = insertAgenda[0].nombre;
                         req.session.apellido = insertAgenda[0].apellido;
+                        // req.session.permisos = insertAgenda[0].permisos;
+                        req.session.correo = insertAgenda[0].correo;
                         //no tiene expiracion la sesion
                         req.session.cookie.expires = new Date(Date.now() + (1000 * 60 * 60 * 24 * 365 * 10));
                         req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 365 * 10;

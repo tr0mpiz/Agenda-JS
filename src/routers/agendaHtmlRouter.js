@@ -140,7 +140,7 @@ agendaHtmlRouter.delete("/eliminar", async (req, res) => {
             // formate la fecha en dd/mm/yyyy hh:mm:ss
             fecha = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear() + " " + fecha.getHours() + ":" + fecha.getMinutes() ;
             
-            //const insertagendaestados = await ejecutarConsulta(`INSERT INTO agenda_estados (id_agenda, id_estado, observacion) VALUES (${id}, 2, 'En sala de espera horario:${fecha}')`);
+            const insertagendaestados = await ejecutarConsulta(`INSERT INTO agenda_estados (id_agenda, id_estado, observacion) VALUES (${id}, 2, 'En sala de espera horario:${fecha}')`);
             //crea un query para obtener los datos del paciente y la fecha de la cita formateada DD/MM/YYYY y hora HH:MM
             const agendaydatosdepaciente = await ejecutarConsulta(`SELECT c.*, a.*, b.*, DATE_FORMAT(fecha_cita,'%d-%m-%Y %H:%i') AS fecha_cita, DATE_FORMAT(proxima_cita,'%d-%m-%Y %H:%i') AS proxima_cita, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente = b.id_paciente AND a.id_agenda = c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda = ${id}`);
             console.log(agendaydatosdepaciente);
