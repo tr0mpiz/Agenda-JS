@@ -83,7 +83,10 @@ pacienteHtmlRouter.get("/", isUser, async (req, res) => {
 pacienteHtmlRouter.get("/siguiente", isUser, async (req, res) => {
     
     try {
-        const pactadas = await ejecutarConsulta("SELECT count(*) AS pactadas FROM agenda_estados WHERE id_estado = 1");
+        const fechaCita2 = new Date();  
+        fechaCita2.setDate(fechaCita2.getDate() + 365);
+        const fechaFormateada2 = fechaCita2.toISOString().slice(0, 10);
+        const pactadas = await ejecutarConsulta("SELECT count(*) AS pactadas FROM agenda_estados a, agenda b WHERE a.id_agenda = b.id_agenda AND id_estado = 1 AND id_estado IN (6,5,4,3,2) AND fecha_cita < "+fechaFormateada2);
         
         //crea la constate ensala que cuente los pacientes que estan en sala de espera pero que no hayan estado en estado 4,5,6
         const ensala = await ejecutarConsulta("SELECT count(*) AS ensala FROM agenda_estados WHERE id_estado = 2 AND id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (6,3,4,5) )");
@@ -91,8 +94,8 @@ pacienteHtmlRouter.get("/siguiente", isUser, async (req, res) => {
         const fechaCita = new Date();
         fechaCita.setDate(fechaCita.getDate() + 1);
         const fechaFormateada = fechaCita.toISOString().slice(0, 10);
-        const maniana = await ejecutarConsulta(`SELECT count(*) as maniana FROM agenda WHERE DATE(fecha_cita) = '${fechaFormateada}'`);
-        const hoy = await ejecutarConsulta(`SELECT count(*) as hoy FROM agenda WHERE DATE(fecha_cita) = CURDATE()`);
+        const maniana = await ejecutarConsulta(`SELECT count(*) as maniana FROM agenda WHERE DATE(fecha_cita) = '${fechaFormateada}' AND id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (6,3,4,5) )`);
+        const hoy = await ejecutarConsulta(`SELECT count(*) as hoy FROM agenda WHERE DATE(fecha_cita) = CURDATE() AND id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (6,3,4,5,2) )`);
 
         const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(fecha_cita,'%d-%m-%Y %H:%i') AS fecha_cita, DATE_FORMAT(proxima_cita,'%d-%m-%Y %H:%i') AS proxima_cita, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente = b.id_paciente AND a.id_agenda = c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (6,3,4,5) ) AND c.id_estado =2;");
         //trae los pacientes que tienen estado 2 y no hayan tenido estado 6
@@ -117,7 +120,7 @@ pacienteHtmlRouter.get("/taller",  isUser,async (req, res) => {
             fecha = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear() + " " + fecha.getHours() + ":" + fecha.getMinutes() ;
             const insertagendaestados = await ejecutarConsulta(`INSERT INTO agenda_estados (id_agenda, id_estado, observacion) VALUES (${id}, 4, 'Se envio a taller :${fecha}')`);
               
-           const pacientes = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%d/%m/%Y') AS fecha_formateada, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2));");
+           const pacientes = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(nacimiento_paciente,'%d/%m/%Y') AS fecha_formateada, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2,6));");
            
            return res.status(200).render("/proximo", { pacientes: pacientes ,isUser:req.session.usuario});
        }  catch (error) {

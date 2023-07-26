@@ -1,14 +1,14 @@
 <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">AGENDA /</span> CONSULTA </h4>
 <div class="container agendacontenedor">
   <div class="row">
-       <div class="col-md-3 col-12 mb-4">
+      <div class="col-md-3 col-12 mb-4">
         <div class="card">
           <div class="card-body">
             <div class="card-title d-flex align-items-start justify-content-between">
               <div class="avatar flex-shrink-0">
                 <i class="bx bx-calendar-plus"></i>
               </div>
-              <div class="dropdown">
+              {{!-- <div class="dropdown">
                 <button class="btn p-0" type="button" id="cardOpt6" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="bx bx-dots-vertical-rounded"></i>
                 </button>
@@ -16,14 +16,10 @@
                   <a class="dropdown-item" href="javascript:void(0);">View More</a>
                   <a class="dropdown-item" href="javascript:void(0);">Delete</a>
                 </div>
-              </div>
+              </div> --}}
             </div>
-             <span class="fw-semibold d-block mb-1">HOY</span>
-            {{#if hoy.0.hoy}}
-            <h3 class="card-title mb-2">{{ hoy.0.hoy }}</h3>
-            {{else}}
-            <h3 class="card-title mb-2">0</h3>
-            {{/if}}
+             <span class="fw-semibold d-block mb-1 en">EN SALA</span>
+             <h3 class="card-title mb-2" id="cantidadsala" >{{#if ensala.0.ensala}} {{ ensala.0.ensala }}{{else}}0{{/if}}</h3>
           </div>
         </div>
       </div>
@@ -32,9 +28,9 @@
           <div class="card-body">
             <div class="card-title d-flex align-items-start justify-content-between">
               <div class="avatar flex-shrink-0">
-                <i class='bx bx-calendar-check' ></i>
+                <i class="bx bx-calendar-check"></i>
               </div>
-              <div class="dropdown">
+              {{!-- <div class="dropdown">
                 <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="bx bx-dots-vertical-rounded"></i>
                 </button>
@@ -42,15 +38,14 @@
                   <a class="dropdown-item" href="javascript:void(0);">View More</a>
                   <a class="dropdown-item" href="javascript:void(0);">Delete</a>
                 </div>
-              </div>
+              </div> --}}
             </div>
-            <span class="fw-semibold d-block mb-1">MAÑANA</span>
-            {{#if maniana.0.maniana}}
-            <h3 class="card-title mb-2">{{ maniana.0.maniana }}</h3>
-            {{else}}
-            <h3 class="card-title mb-2">0</h3>
-            {{/if}}
-            
+            <span class="fw-semibold d-block mb-1">HOY</span>
+           {{#if hoy.0.hoy}}
+              <h3 class="card-title mb-2">{{ hoy.0.hoy }}</h3>
+              {{else}}
+              <h3 class="card-title mb-2">0</h3>
+              {{/if}}
           </div>
         </div>
       </div>
@@ -60,9 +55,9 @@
           <div class="card-body">
             <div class="card-title d-flex align-items-start justify-content-between">
               <div class="avatar flex-shrink-0">
-                <i class='bx bxs-calendar-exclamation'></i>
+                <i class="bx bxs-calendar-exclamation"></i>
               </div>
-              <div class="dropdown">
+              {{!-- <div class="dropdown">
                 <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="bx bx-dots-vertical-rounded"></i>
                 </button>
@@ -70,14 +65,14 @@
                   <a class="dropdown-item" href="javascript:void(0);">View More</a>
                   <a class="dropdown-item" href="javascript:void(0);">Delete</a>
                 </div>
-              </div>
+              </div> --}}
             </div>
-            <span class="fw-semibold d-block mb-1">ASIGNADOS</span>
-            {{#if pactadas.0.pactadas}}
-            <h3 class="card-title mb-2">{{ pactadas.0.pactadas }}</h3>
-            {{else}}
-            <h3 class="card-title mb-2">0</h3>
-            {{/if}}
+            <span class="fw-semibold d-block mb-1">MAÑANA</span>
+            {{#if maniana.0.maniana}}
+              <h3 class="card-title mb-2">{{ maniana.0.maniana }}</h3>
+              {{else}}
+              <h3 class="card-title mb-2">0</h3>
+              {{/if}}
           </div>
         </div>
       </div>
@@ -89,21 +84,22 @@
               <div class="avatar flex-shrink-0">
                 <i class="bx bx-calendar"></i>
               </div>
-              
+              {{!-- <div class="dropdown">
+                <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
+                  <a class="dropdown-item" href="javascript:void(0);">View More</a>
+                  <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+                </div>
+              </div> --}}
             </div>
-            <span class="fw-semibold d-block mb-1">FECHA</span>
-            <div class="btn-group" role="group">
-              
-              <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{ fecha }}
-              </button>
-              <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                <a class="dropdown-item disabled" href="">Toda la semana</a>
-                <a class="dropdown-item disabled" href="">Todo el mes</a>
-              </div>
-            </div>
-            
-            
+            <span class="fw-semibold d-block mb-1">TOTAL</span>
+            {{#if pactadas.0.pactadas}}
+              <h3 class="card-title mb-2">{{ pactadas.0.pactadas }}</h3>
+              {{else}}
+              <h3 class="card-title mb-2">0</h3>
+              {{/if}}
           </div>
         </div>
       </div>

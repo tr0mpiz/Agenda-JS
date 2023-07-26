@@ -45,7 +45,7 @@ agendaHtmlRouter.get("/calendario", isUser, async (req, res) => {
             const fechaCita = new Date();
             fechaCita.setDate(fechaCita.getDate() + 1);
             const fechaFormateada = fechaCita.toISOString().slice(0, 10);
-            const maniana = await ejecutarConsulta(`SELECT count(*) as maniana FROM agenda WHERE DATE(fecha_cita) = '${fechaFormateada}'`);
+            const maniana = await ejecutarConsulta(`SELECT count(*) as maniana FROM agenda WHERE DATE(fecha_cita) = '${fechaFormateada}' AND id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (3,5,6))`);
             const hoy = await ejecutarConsulta(`SELECT count(*) as hoy FROM agenda WHERE DATE(fecha_cita) = CURDATE() AND id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (3,5,6))`);
             let fecha = new Date();
             // formate la fecha en dd/mm/yyyy hh:mm:ss
@@ -75,19 +75,26 @@ agendaHtmlRouter.get("/", isUser,async (req, res) => {
           }
     }else{
         try {
-            const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(fecha_cita,'%H:%i') AS hora, DATE_FORMAT(fecha_cita,'%d/%m/%y') AS fecha_cita, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2,3,5,6) order by fecha_cita);");
-            const pactadas = await ejecutarConsulta("SELECT count(*) AS pactadas FROM agenda_estados WHERE id_estado = 1");
             const fechaCita = new Date();
             fechaCita.setDate(fechaCita.getDate() + 1);
             const fechaFormateada = fechaCita.toISOString().slice(0, 10);
-            const maniana = await ejecutarConsulta(`SELECT count(*) as maniana FROM agenda WHERE DATE(fecha_cita) = '${fechaFormateada}'`);
-            const hoy = await ejecutarConsulta(`SELECT count(*) as hoy FROM agenda WHERE DATE(fecha_cita) = CURDATE() AND id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (3,5,6))`);
+            //ahora crea la constante que tenga el ultimo dia del año
+            const fechaCita2 = new Date();  
+            fechaCita2.setDate(fechaCita2.getDate() + 365);
+            const fechaFormateada2 = fechaCita2.toISOString().slice(0, 10);
+            const ensala = await ejecutarConsulta("SELECT count(*) AS ensala FROM agenda_estados WHERE id_estado = 2 AND id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (6,3,4,5) )");
+            const results = await ejecutarConsulta("SELECT c.*, a.*, b.*, DATE_FORMAT(fecha_cita,'%H:%i') AS hora, DATE_FORMAT(fecha_cita,'%d/%m/%y') AS fecha_cita, e.descripcion FROM agenda a, paciente b, agenda_estados c, estados e WHERE a.id_paciente=b.id_paciente AND a.id_agenda=c.id_agenda AND c.id_estado=e.id_estado AND a.id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2,3,5,6) order by fecha_cita);");
+            const pactadas = await ejecutarConsulta("SELECT count(*) AS pactadas FROM agenda_estados a, agenda b WHERE a.id_agenda = b.id_agenda AND id_estado = 1 AND id_estado NOT IN (6,5,4,3,2)  AND fecha_cita >= '"+fechaFormateada+"' AND fecha_cita <= '"+fechaFormateada2+"'");
+           
+            
+            const maniana = await ejecutarConsulta(`SELECT count(*) as maniana FROM agenda WHERE DATE(fecha_cita) = '${fechaFormateada}' AND id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (6))`);
+            const hoy = await ejecutarConsulta(`SELECT count(*) as hoy FROM agenda WHERE DATE(fecha_cita) = CURDATE() AND id_agenda NOT IN (SELECT id_agenda FROM agenda_estados WHERE id_estado IN (2,3,5,6))`);
             let fecha = new Date();
             // formate la fecha en dd/mm/yyyy hh:mm:ss
             fecha = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear() + " " + fecha.getHours() + ":" + fecha.getMinutes() ;
     
             
-            return res.status(200).render("agenda", { agenda: results ,fecha:fecha,maniana:maniana,pactadas:pactadas,hoy:hoy,isUser:req.session.usuario});
+            return res.status(200).render("agenda", { agenda: results ,fecha:fecha,maniana:maniana,pactadas:pactadas,hoy:hoy,isUser:req.session.usuario,ensala});
         }  catch (error) {
             console.error(error);
             return res.status(404).json({msg:"fallo",error:error});
