@@ -63,6 +63,25 @@ export const con = mysql.createConnection({
 
 // Establece la conexión
 
+export const conuser = mysql.createConnection({
+  host: host,
+  user: user,
+  password: "",
+  database : 'usuarios',
+  port: port
+});
+export const ejecutarConsulta0= (query) => {
+  return new Promise((resolve, reject) => {
+    conuser.query(query, (err, resultados) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(resultados);
+    });
+  });
+};
+
 
 export const ejecutarConsulta= (query) => {
   return new Promise((resolve, reject) => {

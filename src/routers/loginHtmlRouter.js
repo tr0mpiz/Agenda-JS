@@ -1,7 +1,7 @@
 import express from "express";
 import { con, upload } from "../utils.js";
 import fs from "fs";
-import { __dirname, __filename,ejecutarConsulta } from "../utils.js";
+import { __dirname, __filename,ejecutarConsulta0,ejecutarConsulta } from "../utils.js";
 
 //import { agendaService } from "../services/agenda.services.js";
 //import { agendaModel } from "../DAO/models/agenda.model.js";
@@ -33,6 +33,7 @@ loginHtmlRouter.get("/logout", async (req, res) => {
     req.session.nombre = null;
     req.session.apellido = null;
     req.session.permisos = null;
+    req.session.img = null;
     req.session.destroy();
     return res.redirect("/login");
 
@@ -55,7 +56,7 @@ loginHtmlRouter.post('/',async (req, res) => {
   
    try {
         
-        const insertAgenda = await ejecutarConsulta(sqlInsert);
+        const insertAgenda = await ejecutarConsulta0(sqlInsert);
         //controla si recibi informacion de la base de datos
         if (insertAgenda.length == 0) {
             return res.status(200).render("login", { usuario: insertAgenda , status: "error", msg: `No se encuentra ningun Usuario con Email : ${email}` });
@@ -83,6 +84,7 @@ loginHtmlRouter.post('/',async (req, res) => {
                         req.session.apellido = insertAgenda[0].apellido;
                         // req.session.permisos = insertAgenda[0].permisos;
                         req.session.correo = insertAgenda[0].correo;
+                        req.session.img = insertAgenda[0].img;
                         //no tiene expiracion la sesion
                         req.session.cookie.expires = new Date(Date.now() + (1000 * 60 * 60 * 24 * 365 * 10));
                         req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 365 * 10;
@@ -105,7 +107,7 @@ loginHtmlRouter.post('/',async (req, res) => {
         //controla si el usuario existe
         
     } catch (error) {
-        console.error('Error al guardar el paciente: ', error);
+        console.error('Error al pedir el usuario: ', error);
     
     }
 

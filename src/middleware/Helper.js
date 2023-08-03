@@ -6,7 +6,8 @@ export function isUser(req, res, next) {
             nombre: req.session.nombre,
             apellido: req.session.apellido,
             email: req.session.correo,
-            permisos: req.session.permisos
+            permisos: req.session.permisos,
+            img: req.session.img
         };
         req.session.usuario = usuario;
         return next();
