@@ -158,6 +158,8 @@
         </div>
       </div>
       <div class="modal-footer">
+        <div id="generarPDF" class="btn btn-danger">Generar PDF</div>
+
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
        
       </div>
@@ -198,6 +200,18 @@
           
            <form  id="paciente-form" method="POST" action="/paciente/alta">
             <div class="row mb-3 offset-xl-1">
+              <div class="col-sm-12 mt-4 mb-4">
+                {{#if paciente.0.id_paciente}}
+                 
+                   
+                    <button type="button" class="btn m-1 btn-dark" data-bs-toggle="modal" data-bs-target="#plantillascreadas"> Plantillas creadas </button>
+                    <button type="button" class="btn m-1 btn-info" data-bs-toggle="modal" data-bs-target="#citas" > Citas </button>
+                  
+                  
+
+                {{/if}}
+
+              </div>
              
               <div class="col-sm-4 col-xl-2">
                    <label class=" col-form-label" for="nombre_paciente"><i class="bx bx-user"></i>  Nombre</label>
@@ -352,15 +366,14 @@
             
             <div class="row mt-4 mb-4">
               <div class="col-sm-10 offset-xl-2 offset-sm-1 ">
-                
+                <a href="/paciente/siguiente" class="btn m-1 btn-warning "> <-Sala de espera</a>
               
                 {{#if paciente.0.id_paciente}}
                   {{#if modificar}}
                     <button type="button" class="btn m-1 btn-primary" data-bs-toggle="modal" data-bs-target="#backDropModal" > Crear Plantilla</button>
-                    <button type="button" class="btn m-1 btn-dark" data-bs-toggle="modal" data-bs-target="#plantillascreadas"> Plantillas creadas </button>
-                    <button type="button" class="btn m-1 btn-info" data-bs-toggle="modal" data-bs-target="#citas" > Citas </button>
                     <input value="{{ paciente.0.id_paciente }}" type="text" class="form-control d-none"  id="id_paciente" name="id_paciente" >
-                    <button type="" class="btn m-1 btn-success" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" data-bs-trigger="hover" title="Modificar paciente">Guardar</button>
+                    <button type="" class="btn m-1 btn-success" data-bs-toggle="tooltip" data-bs-tooltip="tooltip" data-bs-trigger="hover" title="Modificar paciente">Guardar paciente</button>
+                    
                   {{/if}}
                 {{else}}
                 <input value="0" type="text" class="form-control d-none"  id="id_paciente" name="id_paciente" placeholder="john.doe@example.com" aria-label="john.doe@example.com" aria-describedby="email_paciente2">
@@ -382,11 +395,65 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
-
+<script src="/socket.io/socket.io.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="../js/funcionesHtmlAgenda.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 <script src="../js/main.js"></script>
 <script>
+
+
+
+// Función para generar un PDF
+  function generarPDF() {
+    // Código para generar el contenido del PDF
+    const nombre = document.getElementById('nombre_paciente');
+    const apellido = document.getElementById('apellido_paciente').value;
+    const dni = document.getElementById('dni_paciente').value;
+    const peso = document.getElementById('peso_paciente').value;
+    console.log(dni);
+    // Crea el contenido del PDF
+
+    const contenidoPDF = [
+      {
+        text: 'Datos del paciente',
+        style: 'header',
+      },
+      {
+        text: `Nombre: ${nombre} ${apellido}`,
+        style: 'subheader',
+      },
+      {
+        text: `DNI: ${dni}`,
+        style: 'subheader',
+      },
+      {
+        text: `Peso: ${peso}`,
+        style: 'subheader',
+      },
+      {
+        text: 'Croquis',
+        style: 'header',
+      },
+      {
+        image: canvas.toDataURL(),
+        width: 500,
+        height: 300,
+      },
+    ];  
+
+    // Define el documento PDF
+    const documentoPDF = {
+      content: contenidoPDF,
+    };
+
+    // Genera el PDF
+    pdfMake.createPdf(documentoPDF).open();
+  }
+
+  // Asigna el evento de clic al botón "Generar PDF"
+  const generarPDFButton = document.getElementById('generarPDF');
+  generarPDFButton.addEventListener('click', generarPDF);
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
